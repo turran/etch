@@ -258,6 +258,15 @@ EAPI void etch_animation_delete(Etch_Animation *a)
 	/* TODO delete the list of keyframes */
 	free(a);
 }
+
+/**
+ *
+ */
+EAPI Etch_Data_Type etch_animation_data_type_get(Etch_Animation *a)
+{
+	return a->dtype;
+}
+
 /**
  * Set the number of times the animation should repeat
  * @param a The Etch_Animation

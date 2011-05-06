@@ -128,6 +128,7 @@ EAPI Etch_Animation * etch_animation_add(Etch *e, Etch_Data_Type dtype,
 		Etch_Animation_State_Callback stop,
 		void *data);
 EAPI void etch_animation_delete(Etch_Animation *a);
+EAPI Etch_Data_Type etch_animation_data_type_get(Etch_Animation *a);
 EAPI void etch_animation_disable(Etch_Animation *a);
 EAPI void etch_animation_enable(Etch_Animation *a);
 EAPI Eina_Bool etch_animation_enabled(Etch_Animation *a);
@@ -136,6 +137,7 @@ EAPI Eina_Iterator * etch_animation_iterator_get(Etch_Animation *a);
 EAPI void etch_animation_data_get(Etch_Animation *a, Etch_Data *v);
 EAPI void etch_animation_repeat_set(Etch_Animation *a, unsigned int times);
 EAPI int etch_animation_keyframe_count(Etch_Animation *a);
+
 EAPI Etch_Animation_Keyframe * etch_animation_keyframe_add(Etch_Animation *a);
 EAPI void etch_animation_keyframe_del(Etch_Animation *a, Etch_Animation_Keyframe *m);
 EAPI void etch_animation_keyframe_type_set(Etch_Animation_Keyframe *m, Etch_Animation_Type t);
