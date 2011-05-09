@@ -135,6 +135,7 @@ struct _Etch_Animation
 	int count; /** number of keyframes this animation has */
 	Eina_Bool enabled;/** easy way to disable/enable an animation */
 	Eina_Bool started;
+	Etch_Time offset; /* TODO use this as the real offset */
 };
 
 typedef void (*Etch_Interpolator_Func)(Etch_Data *a, Etch_Data *b, double m, Etch_Data *res, void *data);

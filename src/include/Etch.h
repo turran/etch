@@ -137,6 +137,7 @@ EAPI Eina_Iterator * etch_animation_iterator_get(Etch_Animation *a);
 EAPI void etch_animation_data_get(Etch_Animation *a, Etch_Data *v);
 EAPI void etch_animation_repeat_set(Etch_Animation *a, unsigned int times);
 EAPI int etch_animation_keyframe_count(Etch_Animation *a);
+EAPI Etch_Animation_Keyframe * etch_animation_keyframe_get(Etch_Animation *a, unsigned int index);
 
 EAPI Etch_Animation_Keyframe * etch_animation_keyframe_add(Etch_Animation *a);
 EAPI void etch_animation_keyframe_del(Etch_Animation *a, Etch_Animation_Keyframe *m);

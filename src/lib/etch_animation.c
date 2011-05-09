@@ -36,6 +36,7 @@ extern Etch_Interpolator etch_interpolator_int32;
 extern Etch_Interpolator etch_interpolator_argb;
 extern Etch_Interpolator etch_interpolator_string;
 extern Etch_Interpolator etch_interpolator_float;
+extern Etch_Interpolator etch_interpolator_double;
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -89,6 +90,7 @@ Etch_Interpolator *_interpolators[ETCH_DATATYPES] = {
 	[ETCH_ARGB] = &etch_interpolator_argb,
 	[ETCH_STRING] = &etch_interpolator_string,
 	[ETCH_FLOAT] = &etch_interpolator_float,
+	[ETCH_DOUBLE] = &etch_interpolator_double,
 };
 
 static Eina_Bool _iterator_next(Etch_Animation_Iterator *it, void **data)
@@ -318,6 +320,29 @@ EAPI int etch_animation_keyframe_count(Etch_Animation *a)
 {
 	return a->count;
 }
+
+/**
+ * 
+ */
+EAPI Etch_Animation_Keyframe * etch_animation_keyframe_get(Etch_Animation *a, unsigned int index)
+{
+	Eina_Inlist *l;
+	int i = 0;
+
+	if (index >= a->count) return NULL;
+
+	l = (Eina_Inlist *)a->keys;
+	while (l)
+	{
+		if (i == index)
+			break;
+		l = l->next;
+		i++;
+	}
+	return (Etch_Animation_Keyframe *)l;
+}
+
+
 /**
  * Get the Etch instance this animation belongs to
  * @param a The Etch_Animation
@@ -407,7 +432,7 @@ EAPI Etch_Animation_Type etch_animation_keyframe_type_get(Etch_Animation_Keyfram
  */
 EAPI void etch_animation_keyframe_time_get(Etch_Animation_Keyframe *k, unsigned long *secs, unsigned long *usecs)
 {
-	etch_time_secs_to(k, secs, usecs);
+	etch_time_secs_to(&k->time, secs, usecs);
 }
 /**
  * Set the time on a keyframe
