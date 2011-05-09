@@ -46,19 +46,26 @@ static void _process(Etch *e)
 	EINA_INLIST_FOREACH(e->animations, a)
 	{
 		Etch_Time rcurr;
+		Etch_Time atime; /* animation time */
 
-		/*printf("[%g] %g %g %d\n", etch_time_double_to(&e->curr),
+		/*printf("[%g %g] %g %g %d\n", etch_time_double_to(&e->curr),
+				etch_time_double_to(&a->offset),
 				etch_time_double_to(&a->start),
 				etch_time_double_to(&a->end),
 				a->repeat);*/
 		if (!a->enabled)
 			continue;
-		if (etch_time_ge(&e->curr, &a->start) == EINA_FALSE)
+		/* first decrement the offset */
+		if (!etch_time_ge(&e->curr, &a->offset))
+			continue;
+		etch_time_sub(&e->curr, &a->offset, &atime);
+		/* are we really on the animation time ? */
+		if (!etch_time_ge(&atime, &a->start))
 			continue;
 		/* only once */
 		if (a->repeat == 1)
 		{
-			if (etch_time_le(&e->curr, &a->end) == EINA_FALSE)
+			if (etch_time_le(&atime, &a->end) == EINA_FALSE)
 			{
 				if (a->started)
 				{
@@ -67,7 +74,7 @@ static void _process(Etch *e)
 				}
 				continue;
 			}
-			rcurr = e->curr;
+			rcurr = atime;
 		}
 		/* in case the animation repeats check for it */
 		else
@@ -85,7 +92,7 @@ static void _process(Etch *e)
 				tmp2 = a->end;
 				etch_time_multiply(&tmp2, a->repeat);
 				etch_time_sub(&tmp2, &a->start, &rend);
-				if (etch_time_le(&e->curr, &rend) == EINA_FALSE)
+				if (etch_time_le(&atime, &rend) == EINA_FALSE)
 				{
 					if (a->started)
 					{
@@ -98,7 +105,7 @@ static void _process(Etch *e)
 			/* FIXME the length can be precalculated when a keyframe time is set */
 			etch_time_sub(&a->end, &a->start, &length);
 			//printf("length %g\n", etch_time_double_to(&length));
-			etch_time_sub(&e->curr, &a->start, &tmp);
+			etch_time_sub(&atime, &a->start, &tmp);
 			//printf("relative %g\n", etch_time_double_to(&tmp));
 			etch_time_mod(&tmp, &length, &rcurr);
 			//printf("mod %g\n", etch_time_double_to(&rcurr));
@@ -110,6 +117,7 @@ static void _process(Etch *e)
 			if (a->start_cb) a->start_cb(a, a->data);
 			a->started = EINA_TRUE;
 		}
+		/*printf("animating %g\n", etch_time_double_to(&rcurr));*/
 		etch_animation_animate(a, &rcurr);
 	}
 }

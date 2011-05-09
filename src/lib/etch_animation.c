@@ -391,21 +391,10 @@ EAPI void etch_animation_offset_add(Etch_Animation *a, unsigned long secs, unsig
 	assert(a);
 
 	etch_time_secs_from(&inc, secs, usecs);
-	l = (Eina_Inlist *)(a->keys);
-
-	if (!l)
-		return;
-	/* increment every keyframe by secs.usecs */
-	while (l)
-	{
-		unsigned long secs, usecs;
-		Etch_Animation_Keyframe *k = (Etch_Animation_Keyframe *)l;
-
-		etch_time_increment(&k->time, &inc);
-		l = l->next;
-	}
-	_update_start_end(a);
-}/**
+	printf("setting offset %ld %ld\n", secs, usecs);
+	a->offset = inc;
+}
+/**
  * Set the type of an animation keyframe
  * @param k The Etch_Animation_Keyframe
  * @param t The type of the interpolation
