@@ -1,4 +1,5 @@
-## Process this file with automake to produce Makefile.in
+
+ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS = src
 
@@ -16,8 +17,7 @@ missing mkinstalldirs \
 stamp-h.in \
 build-stamp \
 configure-stamp \
-depcomp \
-etch.pc 
+depcomp
 
 EXTRA_DIST = \
 AUTHORS \
@@ -29,4 +29,3 @@ etch.pc.in
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = etch.pc
-ACLOCAL_AMFLAGS = -I m4

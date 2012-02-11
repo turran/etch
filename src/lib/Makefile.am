@@ -2,6 +2,7 @@ MAINTAINERCLEANFILES = Makefile.in
 
 AM_CPPFLAGS = \
 -I$(top_srcdir)/src/include \
+-I$(top_builddir)/src/include \
 @ETCH_CFLAGS@
 
 lib_LTLIBRARIES = libetch.la
@@ -17,8 +18,6 @@ etch_interpolator_int32.c \
 etch_interpolator_float.c \
 etch_interpolator_double.c
 
-libetch_la_LIBADD = -lm @ETCH_LIBS@
+libetch_la_LIBADD = @ETCH_LIBS@ -lm
 
-libetch_la_DEPENDENCIES =
-
-libetch_la_LDFLAGS = @create_shared_lib@ -version-info @version_info@
+libetch_la_LDFLAGS = -no-undefined -version-info @version_info@
