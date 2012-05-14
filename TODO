@@ -1,1 +1,2 @@
 + Add assert statements
++ Replace the time val struct and use just int64 in nanoseconds
