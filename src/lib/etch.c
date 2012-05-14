@@ -172,6 +172,7 @@ EAPI void etch_delete(Etch *e)
 {
 	assert(e);
 	/* remove every object */
+	/* TODO remove every animation */
 	free(e);
 }
 /**
@@ -269,4 +270,14 @@ EAPI Etch_Animation * etch_animation_add(Etch *e, Etch_Data_Type dtype,
 	e->animations = eina_inlist_append(e->animations, EINA_INLIST_GET(a));
 
 	return a;
+}
+
+/**
+ * Remove the animation from the Etch instance
+ * @param e The Etch instance to remove the animation from
+ * @param a The animation to remove
+ */
+EAPI void etch_animation_remove(Etch *e, Etch_Animation *a)
+{
+	e->animations = eina_inlist_remove(e->animations, EINA_INLIST_GET(a));
 }

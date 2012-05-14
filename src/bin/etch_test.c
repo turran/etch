@@ -9,17 +9,17 @@
 
 int _timer_event = 0;
 
-void _uint32_cb(const Etch_Data *curr, const Etch_Data *prev, void *data)
+void _uint32_cb(Etch_Animation_Keyframe *k, const Etch_Data *curr, const Etch_Data *prev, void *data)
 {
 	printf("[UINT32] curr %d old %d\n", curr->data.u32, prev->data.u32);
 }
 
-void _color_cb(const Etch_Data *curr, const Etch_Data *prev, void *data)
+void _color_cb(Etch_Animation_Keyframe *k, const Etch_Data *curr, const Etch_Data *prev, void *data)
 {
 	printf("[ARGB] curr %08x old %08x\n", curr->data.argb, prev->data.argb);
 }
 
-void _string_cb(const Etch_Data *curr, const Etch_Data *prev, void *data)
+void _string_cb(Etch_Animation_Keyframe *k, const Etch_Data *curr, const Etch_Data *prev, void *data)
 {
 	printf("[STRING] curr %s old %s\n", curr->data.string, prev->data.string);
 }

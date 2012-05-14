@@ -110,6 +110,8 @@ struct _Etch_Animation_Keyframe
 	Etch_Animation_Type type; /** type of interpolation between this mark and the next */
 	Etch_Animation_Quadratic q; /** quadratic interpolation specific data */
 	Etch_Animation_Cubic c; /** cubic interpolation specific data */
+	void *data;
+	Etch_Free data_free;
 };
 
 /**

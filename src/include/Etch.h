@@ -135,12 +135,19 @@ typedef enum _Etch_Animation_Type
 } Etch_Animation_Type;
 
 /**
+ * Function definition for freeing user data
+ */
+typedef void (*Etch_Free)(void *data);
+
+
+/**
  * Callback function used when a property value changes
+ * @param k The current keyframe
  * @param curr The current value
  * @param prev The previous value
  * @param data User provided data
  */
-typedef void (*Etch_Animation_Callback)(const Etch_Data *curr, const Etch_Data *prev, void *data);
+typedef void (*Etch_Animation_Callback)(Etch_Animation_Keyframe *k, const Etch_Data *curr, const Etch_Data *prev, void *data);
 /**
  * Callback function used when an animation is started or stopped
  * @param a The animation that triggered the event
@@ -153,6 +160,8 @@ EAPI Etch_Animation * etch_animation_add(Etch *e, Etch_Data_Type dtype,
 		Etch_Animation_State_Callback start,
 		Etch_Animation_State_Callback stop,
 		void *data);
+EAPI void etch_animation_remove(Etch *e, Etch_Animation *a);
+
 EAPI void etch_animation_delete(Etch_Animation *a);
 EAPI Etch_Data_Type etch_animation_data_type_get(Etch_Animation *a);
 EAPI void etch_animation_disable(Etch_Animation *a);
@@ -166,9 +175,11 @@ EAPI int etch_animation_keyframe_count(Etch_Animation *a);
 EAPI Etch_Animation_Keyframe * etch_animation_keyframe_get(Etch_Animation *a, unsigned int index);
 
 EAPI Etch_Animation_Keyframe * etch_animation_keyframe_add(Etch_Animation *a);
-EAPI void etch_animation_keyframe_del(Etch_Animation *a, Etch_Animation_Keyframe *m);
+EAPI void etch_animation_keyframe_remove(Etch_Animation *a, Etch_Animation_Keyframe *m);
 EAPI void etch_animation_keyframe_type_set(Etch_Animation_Keyframe *m, Etch_Animation_Type t);
 EAPI Etch_Animation_Type etch_animation_keyframe_type_get(Etch_Animation_Keyframe *m);
+EAPI void etch_animation_keyframe_data_set(Etch_Animation_Keyframe *k, void *data, Etch_Free free);
+EAPI void * etch_animation_keyframe_data_get(Etch_Animation_Keyframe *k);
 EAPI void etch_animation_keyframe_time_set(Etch_Animation_Keyframe *m, unsigned long secs, unsigned long usecs);
 EAPI void etch_animation_keyframe_time_get(Etch_Animation_Keyframe *k, unsigned long *secs, unsigned long *usecs);
 EAPI void etch_animation_keyframe_value_set(Etch_Animation_Keyframe *k, Etch_Data *v);

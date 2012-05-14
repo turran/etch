@@ -128,6 +128,12 @@ static void _update_start_end(Etch_Animation *a)
 	a->end = end->time;
 }
 
+static void _keyframe_delete(Etch_Animation_Keyframe *k)
+{
+	if (k->data && k->data_free)
+		k->data_free(k->data);
+	free(k);
+}
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -177,7 +183,7 @@ void etch_animation_animate(Etch_Animation *a, Etch_Time *curr)
 			/* accelerate the calculations if we get the same m as the previous call */
 			if (m == a->m)
 			{
-				a->cb(&a->curr, &a->curr, a->data);
+				a->cb(start, &a->curr, &a->curr, a->data);
 				return;
 			}
 			/* store old value */
@@ -208,7 +214,7 @@ void etch_animation_animate(Etch_Animation *a, Etch_Time *curr)
 			}
 			ifnc(&(start->value), &(end->value), m, &a->curr, &data);
 			/* once the value has been set, call the callback */
-			a->cb(&a->curr, &old, a->data);
+			a->cb(start, &a->curr, &old, a->data);
 			return;
 		}
 		l = l->next;
@@ -256,8 +262,17 @@ EAPI void etch_animation_data_get(Etch_Animation *a, Etch_Data *v)
  */
 EAPI void etch_animation_delete(Etch_Animation *a)
 {
+	Etch_Animation_Keyframe *k;
+	Eina_Inlist *l2;
+
 	assert(a);
-	/* TODO delete the list of keyframes */
+	etch_animation_remove(a->etch, a);
+	/* delete the list of keyframes */
+	EINA_INLIST_FOREACH_SAFE(a->keys, l2, k)
+	{
+		a->keys = eina_inlist_remove(a->keys, EINA_INLIST_GET(k));
+		_keyframe_delete(k);
+	}
 	free(a);
 }
 
@@ -298,11 +313,11 @@ EAPI Etch_Animation_Keyframe * etch_animation_keyframe_add(Etch_Animation *a)
 	return k;
 }
 /**
- * Delete the keyframe from the animation
+ * Remove the keyframe from the animation
  * @param a The Etch_Animation
  * @param k The Etch_Animation_Keyframe
  */
-EAPI void etch_animation_keyframe_del(Etch_Animation *a, Etch_Animation_Keyframe *k)
+EAPI void etch_animation_keyframe_remove(Etch_Animation *a, Etch_Animation_Keyframe *k)
 {
 	assert(a);
 	assert(k);
@@ -310,8 +325,28 @@ EAPI void etch_animation_keyframe_del(Etch_Animation *a, Etch_Animation_Keyframe
 	a->keys = eina_inlist_remove(a->keys, EINA_INLIST_GET(k));
 	a->count--;
 	/* TODO recalculate the start and end if necessary */
-	free(k);
+	_keyframe_delete(k);
 }
+
+/**
+ *
+ */
+EAPI void etch_animation_keyframe_data_set(Etch_Animation_Keyframe *k, void *data, Etch_Free free)
+{
+	if (k->data && k->data_free)
+		k->data_free(k->data);
+	k->data = data;
+	k->data_free = free;
+}
+
+/**
+ *
+ */
+EAPI void * etch_animation_keyframe_data_get(Etch_Animation_Keyframe *k)
+{
+	return k->data;
+}
+
 /**
  * Get the number of keyframes an animation has
  * @param a The Etch_Animation
