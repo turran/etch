@@ -9,7 +9,6 @@ lib_LTLIBRARIES = libetch.la
 
 libetch_la_SOURCES = \
 etch.c \
-etch_time.c \
 etch_animation.c \
 etch_interpolator_argb.c \
 etch_interpolator_string.c \

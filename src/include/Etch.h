@@ -63,6 +63,17 @@ EAPI void etch_init(void);
 EAPI void etch_shutdown(void);
 
 typedef struct _Etch Etch; /**< Etch Opaque Handler */
+typedef uint64_t Etch_Time; /**< Etch Time abstraction in nano seconds */
+
+#define ETCH_SECOND (1000000000LL)
+#define ETCH_MSECOND (1000000LL)
+
+#define ETCH_TIME_FORMAT "u:%02u:%02u.%09u"
+#define ETCH_TIME_ARGS(t) \
+	(uint32_t) (((Etch_Time)(t)) / (ETCH_SECOND * 60 * 60)), \
+	(uint32_t) ((((Etch_Time)(t)) / (ETCH_SECOND * 60)) % 60), \
+	(uint32_t) ((((Etch_Time)(t)) / ETCH_SECOND) % 60), \
+	(uint32_t) (((Etch_Time)(t)) % ETCH_SECOND)
 
 EAPI Etch * etch_new(void);
 EAPI void etch_delete(Etch *e);
@@ -71,7 +82,7 @@ EAPI unsigned int etch_timer_fps_get(Etch *e);
 EAPI void etch_timer_tick(Etch *e);
 EAPI int etch_timer_has_end(Etch *e);
 EAPI void etch_timer_goto(Etch *e, unsigned long frame);
-EAPI void etch_timer_get(Etch *e, unsigned long *secs, unsigned long *usecs);
+EAPI void etch_timer_get(Etch *e, Etch_Time *t);
 
 /**
  * Data types for a property
@@ -180,8 +191,8 @@ EAPI void etch_animation_keyframe_type_set(Etch_Animation_Keyframe *m, Etch_Anim
 EAPI Etch_Animation_Type etch_animation_keyframe_type_get(Etch_Animation_Keyframe *m);
 EAPI void etch_animation_keyframe_data_set(Etch_Animation_Keyframe *k, void *data, Etch_Free free);
 EAPI void * etch_animation_keyframe_data_get(Etch_Animation_Keyframe *k);
-EAPI void etch_animation_keyframe_time_set(Etch_Animation_Keyframe *m, unsigned long secs, unsigned long usecs);
-EAPI void etch_animation_keyframe_time_get(Etch_Animation_Keyframe *k, unsigned long *secs, unsigned long *usecs);
+EAPI void etch_animation_keyframe_time_set(Etch_Animation_Keyframe *m, Etch_Time t);
+EAPI void etch_animation_keyframe_time_get(Etch_Animation_Keyframe *k, Etch_Time *t);
 EAPI void etch_animation_keyframe_value_set(Etch_Animation_Keyframe *k, Etch_Data *v);
 EAPI void etch_animation_keyframe_value_get(Etch_Animation_Keyframe *k, Etch_Data *v);
 EAPI void etch_animation_keyframe_cubic_value_set(Etch_Animation_Keyframe *k, Etch_Data *cp1,

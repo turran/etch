@@ -48,24 +48,29 @@ static void _process(Etch *e)
 		Etch_Time rcurr;
 		Etch_Time atime; /* animation time */
 
-		/*printf("[%g %g] %g %g %d\n", etch_time_double_to(&e->curr),
-				etch_time_double_to(&a->offset),
-				etch_time_double_to(&a->start),
-				etch_time_double_to(&a->end),
+		/*printf("[%" ETCH_TIME_FORMAT " %" ETCH_TIME_FORMAT "]"
+				" %" ETCH_TIME_FORMAT \
+				" %" ETCH_TIME_FORMAT \
+				" %d\n",
+				ETCH_TIME_ARGS (e->curr),
+				ETCH_TIME_ARGS (a->offset),
+				ETCH_TIME_ARGS (a->start),
+				ETCH_TIME_ARGS (a->end),
 				a->repeat);*/
 		if (!a->enabled)
 			continue;
 		/* first decrement the offset */
-		if (!etch_time_ge(&e->curr, &a->offset))
+		if (e->curr < a->offset)
 			continue;
-		etch_time_sub(&e->curr, &a->offset, &atime);
+		
+		atime = e->curr - a->offset;
 		/* are we really on the animation time ? */
-		if (!etch_time_ge(&atime, &a->start))
+		if (atime < a->start)
 			continue;
 		/* only once */
 		if (a->repeat == 1)
 		{
-			if (etch_time_le(&atime, &a->end) == EINA_FALSE)
+			if (atime > a->end)
 			{
 				if (a->started)
 				{
@@ -90,9 +95,9 @@ static void _process(Etch *e)
 
 				/* FIXME the length can be precalculated when repeat is set */
 				tmp2 = a->end;
-				etch_time_multiply(&tmp2, a->repeat);
-				etch_time_sub(&tmp2, &a->start, &rend);
-				if (etch_time_le(&atime, &rend) == EINA_FALSE)
+				tmp2 *= a->repeat;
+				rend = tmp2 - a->start;
+				if (atime > rend)
 				{
 					if (a->started)
 					{
@@ -103,22 +108,24 @@ static void _process(Etch *e)
 				}
 			}
 			/* FIXME the length can be precalculated when a keyframe time is set */
-			etch_time_sub(&a->end, &a->start, &length);
-			//printf("length %g\n", etch_time_double_to(&length));
-			etch_time_sub(&atime, &a->start, &tmp);
-			//printf("relative %g\n", etch_time_double_to(&tmp));
-			etch_time_mod(&tmp, &length, &rcurr);
-			//printf("mod %g\n", etch_time_double_to(&rcurr));
-			etch_time_increment(&rcurr, &a->start);
-			//printf("final %g (%g)\n", etch_time_double_to(&rcurr), etch_time_double_to(&e->curr));
+			length = a->end - a->start;
+			//printf("length %" ETCH_TIME_FORMAT "\n", ETCH_TIME_ARGS (length));
+			tmp = atime - a->start;
+			//printf("relative %" ETCH_TIME_FORMAT "\n", ETCH_TIME_ARGS (tmp));
+			rcurr = tmp % length;
+			//printf("mod %" ETCH_TIME_FORMAT "\n", ETCH_TIME_ARGS (rcurr));
+			rcurr += a->start;
+			//printf("final %" ETCH_TIME_FORMAT " %" ETCH_TIME_FORMAT "\n",
+			//		ETCH_TIME_ARGS (rcurr),
+			//		ETCH_TIME_ARGS (e->curr));
 		}
 		if (!a->started)
 		{
 			if (a->start_cb) a->start_cb(a, a->data);
 			a->started = EINA_TRUE;
 		}
-		/*printf("animating %g\n", etch_time_double_to(&rcurr));*/
-		etch_animation_animate(a, &rcurr);
+		//printf("animating %" ETCH_TIME_FORMAT "\n", ETCH_TIME_ARGS (rcurr));
+		etch_animation_animate(a, rcurr);
 	}
 }
 /*============================================================================*
@@ -160,7 +167,7 @@ EAPI Etch * etch_new(void)
 	Etch *e;
 
 	e = calloc(1, sizeof(Etch));
-	e->fps = DEFAULT_FPS;
+	etch_timer_fps_set(e, DEFAULT_FPS);
 	return e;
 }
 
@@ -187,8 +194,8 @@ EAPI void etch_timer_fps_set(Etch *e, unsigned int fps)
 	assert(e);
 
 	e->fps = fps;
-	spf = (double)1/fps;
-	etch_time_double_from(&e->tpf, spf);
+	spf = (double)1.0/fps;
+	e->tpf = spf * ETCH_SECOND;
 }
 /**
  * Sets the frames per second
@@ -209,7 +216,7 @@ EAPI void etch_timer_tick(Etch *e)
 	assert(e);
 	/* TODO check for overflow */
 	e->frame++;
-	etch_time_increment(&e->curr, &e->tpf);
+	e->curr += e->tpf;
 	_process(e);
 }
 /**
@@ -230,9 +237,9 @@ EAPI int etch_timer_has_end(Etch *e)
  * @param secs The pointer where the seconds are going to be stored
  * @param usecs The pointer where the microseconds are going to be stored
  */
-EAPI void etch_timer_get(Etch *e, unsigned long *secs, unsigned long *usecs)
+EAPI void etch_timer_get(Etch *e, Etch_Time *t)
 {
-	etch_time_secs_to(&e->curr, secs, usecs);
+	*t = e->curr;
 }
 /**
  * Move the Etch global time to the specific frame
@@ -244,8 +251,7 @@ EAPI void etch_timer_goto(Etch *e, unsigned long frame)
 	Etch_Time t;
 
 	e->frame = frame;
-	t = e->tpf;
-	etch_time_multiply(&t, frame);
+	t = e->tpf * frame;
 	e->curr = t;
 	_process(e);
 }

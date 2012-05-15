@@ -37,33 +37,6 @@
 
 extern int etch_log;
 
-/*
- * Abstract implementation of the internal timer implementation
- */
-typedef struct _Etch_Time
-{
-#ifdef ETCH_TIME_DOUBLE
-	double t;
-#else
-	unsigned long int secs;
-	unsigned long int usecs;
-#endif
-} Etch_Time;
-
-void etch_time_init_max(Etch_Time *t);
-Eina_Bool etch_time_equal(Etch_Time *t, Etch_Time *cmp);
-Eina_Bool etch_time_ge(Etch_Time *l, Etch_Time *r);
-Eina_Bool etch_time_le(Etch_Time *l, Etch_Time *r);
-Eina_Bool etch_time_between(Etch_Time *first, Etch_Time *last, Etch_Time *cmp);
-double etch_time_interpolate(Etch_Time *first, Etch_Time *last, Etch_Time *curr);
-void etch_time_increment(Etch_Time *t, Etch_Time *a);
-void etch_time_secs_from(Etch_Time *t, unsigned long int secs, unsigned long int usecs);
-void etch_time_secs_to(Etch_Time *t, unsigned long int *secs, unsigned long int *usecs);
-double etch_time_double_to(Etch_Time *t);
-void etch_time_double_from(Etch_Time *t, double d);
-void etch_time_multiply(Etch_Time *t, unsigned int scalar);
-void etch_time_sub(Etch_Time *a, Etch_Time *b, Etch_Time *res);
-
 /**
  *
  */
@@ -146,7 +119,7 @@ typedef struct _Etch_Interpolator
 	Etch_Interpolator_Func funcs[ETCH_ANIMATION_TYPES];
 } Etch_Interpolator;
 
-void etch_animation_animate(Etch_Animation *a, Etch_Time *curr);
+void etch_animation_animate(Etch_Animation *a, Etch_Time curr);
 Etch_Animation * etch_animation_new(Etch *e, Etch_Data_Type dtype, Etch_Animation_Callback cb, Etch_Animation_State_Callback start, Etch_Animation_State_Callback stop, void *data);
 
 #endif /*ETCH_PRIVATE_H_*/
