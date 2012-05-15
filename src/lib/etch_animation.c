@@ -134,6 +134,44 @@ static void _keyframe_delete(Etch_Animation_Keyframe *k)
 		k->data_free(k->data);
 	free(k);
 }
+
+static void _keyframes_order(Etch_Animation *a, Etch_Animation_Keyframe *k)
+{
+	Eina_Inlist *l;
+	Etch_Time t;
+
+	t = k->time;
+	/* find the greater element with the value less than the one to set */
+	l = (Eina_Inlist *)(a->keys);
+	while (l)
+	{
+		Etch_Animation_Keyframe *k2 = (Etch_Animation_Keyframe *)l;
+
+		if (k2->time >= t)
+			break;
+		l = l->next;
+	}
+	/* if the element to remove is the same as the element to change, do
+	 * nothing */
+	if ((Etch_Animation_Keyframe*)l == k)
+		goto update;
+	a->keys = eina_inlist_remove(a->keys, EINA_INLIST_GET(k));
+	/* k is the greatest */
+	if (!l)
+	{
+		a->keys = eina_inlist_append(a->keys, EINA_INLIST_GET(k));
+		/* TODO handle the iterator correctly */
+	}
+	/* k is between two keyframes */
+	else
+	{
+		a->keys = eina_inlist_prepend_relative(a->keys, EINA_INLIST_GET(k), l);
+		/* TODO handle the iterator correctly */
+	}
+	/* update the start and end values */
+update:
+	_update_start_end(a);
+}
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -307,7 +345,9 @@ EAPI Etch_Animation_Keyframe * etch_animation_keyframe_add(Etch_Animation *a)
 	k->animation = a;
 
 	/* add the new keyframe to the list of keyframes */
-	a->keys = eina_inlist_prepend(a->keys, EINA_INLIST_GET(k));
+	/* TODO we should always keep the animations ordered */
+	a->keys = eina_inlist_append(a->keys, EINA_INLIST_GET(k));
+	a->unordered = eina_list_append(a->unordered, k);
 	a->count++;
 
 	return k;
@@ -323,6 +363,7 @@ EAPI void etch_animation_keyframe_remove(Etch_Animation *a, Etch_Animation_Keyfr
 	assert(k);
 	/* remove the keyframe from the list */
 	a->keys = eina_inlist_remove(a->keys, EINA_INLIST_GET(k));
+	a->unordered = eina_list_append(a->unordered, k);
 	a->count--;
 	/* TODO recalculate the start and end if necessary */
 	_keyframe_delete(k);
@@ -361,20 +402,10 @@ EAPI int etch_animation_keyframe_count(Etch_Animation *a)
  */
 EAPI Etch_Animation_Keyframe * etch_animation_keyframe_get(Etch_Animation *a, unsigned int index)
 {
-	Eina_Inlist *l;
-	int i = 0;
+	Etch_Animation_Keyframe *k;
 
-	if (index >= a->count) return NULL;
-
-	l = (Eina_Inlist *)a->keys;
-	while (l)
-	{
-		if (i == index)
-			break;
-		l = l->next;
-		i++;
-	}
-	return (Etch_Animation_Keyframe *)l;
+	k = eina_list_nth(a->unordered, index);
+	return k;
 }
 
 
@@ -464,7 +495,6 @@ EAPI void etch_animation_keyframe_time_get(Etch_Animation_Keyframe *k, Etch_Time
 EAPI void etch_animation_keyframe_time_set(Etch_Animation_Keyframe *k, Etch_Time t)
 {
 	Etch_Animation *a;
-	Eina_Inlist *l;
 
 	assert(k);
 
@@ -472,37 +502,8 @@ EAPI void etch_animation_keyframe_time_set(Etch_Animation_Keyframe *k, Etch_Time
 	if (k->time == t)
 		return;
 	a = k->animation;
-	/* find the greater element with the value less than the one to set */
-	l = (Eina_Inlist *)(a->keys);
-	while (l)
-	{
-		Etch_Animation_Keyframe *k2 = (Etch_Animation_Keyframe *)l;
-
-		if (k2->time >= t)
-			break;
-		l = l->next;
-	}
-	/* if the element to remove is the same as the element to change, do
-	 * nothing */
-	if ((Etch_Animation_Keyframe*)l == k)
-		goto update;
-	a->keys = eina_inlist_remove(a->keys, EINA_INLIST_GET(k));
-	/* k is the greatest */
-	if (!l)
-	{
-		a->keys = eina_inlist_append(a->keys, EINA_INLIST_GET(k));
-		/* TODO handle the iterator correctly */
-	}
-	/* k is between two keyframes */
-	else
-	{
-		a->keys = eina_inlist_prepend_relative(a->keys, EINA_INLIST_GET(k), l);
-		/* TODO handle the iterator correctly */
-	}
-	/* update the start and end values */
-update:
 	k->time = t;
-	_update_start_end(a);
+	_keyframes_order(a, k);
 }
 /**
  * Get the value for a keyfame

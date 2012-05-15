@@ -93,7 +93,10 @@ struct _Etch_Animation_Keyframe
 struct _Etch_Animation
 {
 	EINA_INLIST; /** An animation is a list */
-	Eina_Inlist *keys; /** list of keyframes */
+	Eina_Inlist *keys; /** list of keyframes ordered */
+	/* we can not iterate through the keys and modify the time given that inmediately
+	 * the keys will be ordered */
+	Eina_List *unordered; /** list of keyframes unordered */
 	Etch *etch; /** Etch having this animation */
 	/* TODO if the marks are already ordered do we need to have the start
 	 * and end time duplicated here? */
