@@ -30,7 +30,7 @@
  *============================================================================*/
 #define DEFAULT_FPS 30
 
-static _init_count = 0;
+static int _init_count = 0;
 
 static void _fps_to_time(unsigned long frame, unsigned long *time)
 {
