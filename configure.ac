@@ -68,7 +68,7 @@ PKG_CHECK_MODULES([ETCH], [${requirements_etch}])
 
 ## Make the debug preprocessor configurable
 
-AC_OUTPUT([
+AC_CONFIG_FILES([
 Makefile
 etch.pc
 src/Makefile
@@ -77,6 +77,7 @@ src/lib/Makefile
 src/include/Makefile
 ])
 
+AC_OUTPUT
 
 #####################################################################
 ## Info
