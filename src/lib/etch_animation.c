@@ -49,19 +49,19 @@ typedef struct _Etch_Animation_Iterator
 
 static void _keyframe_debug(Etch_Animation_Keyframe *k)
 {
-	printf("Keyframe at %lld of type %d\n", k->time, k->type);
+	DBG("Keyframe at %lld of type %d", k->time, k->type);
 	switch (k->value.type)
 	{
 		case ETCH_UINT32:
-		printf("value = %u\n", k->value.data.u32);
+		DBG("value = %u", k->value.data.u32);
 		break;
 
 		case ETCH_ARGB:
-		printf("value = 0x%8x\n", k->value.data.argb);
+		DBG("value = 0x%8x", k->value.data.argb);
 		break;
 
 		case ETCH_STRING:
-		printf("value = %s\n", k->value.data.string);
+		DBG("value = %s", k->value.data.string);
 		break;
 
 		default:
@@ -73,7 +73,7 @@ static void _animation_debug(Etch_Animation *a)
 {
 	Eina_Inlist *l;
 
-	printf("Animation that interpolates data of type %d, with the following keyframes:\n", a->dtype);
+	DBG("Animation that interpolates data of type %d, with the following keyframes:", a->dtype);
 	l = (Eina_Inlist *)a->keys;
 	while (l)
 	{
@@ -203,7 +203,7 @@ void etch_animation_animate(Etch_Animation *a, Etch_Time curr)
 		if (!end)
 			break;
 		/* get the keyframe affected */
-		//printf("-> [%g] %g %g\n", curr, start->time, end->time);
+		//DBG("-> [%g] %g %g", curr, start->time, end->time);
 		if ((start->time <= curr) && (curr <= end->time))
 		{
 			Etch_Interpolator_Func ifnc;
@@ -398,7 +398,7 @@ EAPI int etch_animation_keyframe_count(Etch_Animation *a)
 }
 
 /**
- * 
+ *
  */
 EAPI Etch_Animation_Keyframe * etch_animation_keyframe_get(Etch_Animation *a, unsigned int index)
 {
@@ -451,8 +451,6 @@ EAPI Eina_Bool etch_animation_enabled(Etch_Animation *a)
  */
 EAPI void etch_animation_offset_add(Etch_Animation *a, Etch_Time inc)
 {
-	Eina_Inlist *l;
-
 	assert(a);
 
 	a->offset = inc;
@@ -571,5 +569,3 @@ EAPI Eina_Iterator * etch_animation_iterator_get(Etch_Animation *a)
 
 	return &it->iterator;
 }
-
-

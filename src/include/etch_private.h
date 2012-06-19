@@ -31,11 +31,24 @@
 
 #include "Eina.h"
 
-#define ERR(...) EINA_LOG_DOM_ERR(etch_log, __VA_ARGS__)
-#define WRN(...) EINA_LOG_DOM_WARN(etch_log, __VA_ARGS__)
-#define DBG(...) EINA_LOG_DOM_DBG(etch_log, __VA_ARGS__)
+#define ETCH_LOG_COLOR_DEFAULT EINA_COLOR_BLUE
 
-extern int etch_log;
+#ifdef ERR
+# undef ERR
+#endif
+#define ERR(...) EINA_LOG_DOM_ERR(etch_log_dom_global, __VA_ARGS__)
+
+#ifdef WRN
+# undef WRN
+#endif
+#define WRN(...) EINA_LOG_DOM_WARN(etch_log_dom_global, __VA_ARGS__)
+
+#ifdef DBG
+# undef DBG
+#endif
+#define DBG(...) EINA_LOG_DOM_DBG(etch_log_dom_global, __VA_ARGS__)
+
+extern int etch_log_dom_global;
 
 /**
  *

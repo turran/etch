@@ -48,10 +48,10 @@ static void _process(Etch *e)
 		Etch_Time rcurr;
 		Etch_Time atime; /* animation time */
 
-		/*printf("[%" ETCH_TIME_FORMAT " %" ETCH_TIME_FORMAT "]"
+		/*DBG("[%" ETCH_TIME_FORMAT " %" ETCH_TIME_FORMAT "]"
 				" %" ETCH_TIME_FORMAT \
 				" %" ETCH_TIME_FORMAT \
-				" %d\n",
+				" %d",
 				ETCH_TIME_ARGS (e->curr),
 				ETCH_TIME_ARGS (a->offset),
 				ETCH_TIME_ARGS (a->start),
@@ -62,7 +62,7 @@ static void _process(Etch *e)
 		/* first decrement the offset */
 		if (e->curr < a->offset)
 			continue;
-		
+
 		atime = e->curr - a->offset;
 		/* are we really on the animation time ? */
 		if (atime < a->start)
@@ -109,13 +109,13 @@ static void _process(Etch *e)
 			}
 			/* FIXME the length can be precalculated when a keyframe time is set */
 			length = a->end - a->start;
-			//printf("length %" ETCH_TIME_FORMAT "\n", ETCH_TIME_ARGS (length));
+			//DBG("length %" ETCH_TIME_FORMAT, ETCH_TIME_ARGS (length));
 			tmp = atime - a->start;
-			//printf("relative %" ETCH_TIME_FORMAT "\n", ETCH_TIME_ARGS (tmp));
+			//DBG("relative %" ETCH_TIME_FORMAT, ETCH_TIME_ARGS (tmp));
 			rcurr = tmp % length;
-			//printf("mod %" ETCH_TIME_FORMAT "\n", ETCH_TIME_ARGS (rcurr));
+			//DBG("mod %" ETCH_TIME_FORMAT, ETCH_TIME_ARGS (rcurr));
 			rcurr += a->start;
-			//printf("final %" ETCH_TIME_FORMAT " %" ETCH_TIME_FORMAT "\n",
+			//DBG("final %" ETCH_TIME_FORMAT " %" ETCH_TIME_FORMAT,
 			//		ETCH_TIME_ARGS (rcurr),
 			//		ETCH_TIME_ARGS (e->curr));
 		}
@@ -124,14 +124,14 @@ static void _process(Etch *e)
 			if (a->start_cb) a->start_cb(a, a->data);
 			a->started = EINA_TRUE;
 		}
-		//printf("animating %" ETCH_TIME_FORMAT "\n", ETCH_TIME_ARGS (rcurr));
+		//DBG("animating %" ETCH_TIME_FORMAT, ETCH_TIME_ARGS (rcurr));
 		etch_animation_animate(a, rcurr);
 	}
 }
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-int etch_log = -1;
+int etch_log_dom_global = -1;
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
@@ -143,9 +143,18 @@ EAPI void etch_init(void)
 {
 	if (_init_count) goto done;
 	eina_init();
-	etch_log = eina_log_domain_register("etch", NULL);
+	etch_log_dom_global = eina_log_domain_register("etch", ETCH_LOG_COLOR_DEFAULT);
+	if (etch_log_dom_global < 0)
+	{
+		EINA_LOG_ERR("Etch: Can not create a general log domain.");
+		goto shutdown_eina;
+	}
 done:
 	_init_count++;
+
+  shutdown_eina:
+	eina_shutdown();
+	--_init_count;
 }
 /**
  * Shutdown Etch.
@@ -153,7 +162,8 @@ done:
 EAPI void etch_shutdown(void)
 {
 	if (_init_count != 1) goto done;
-	eina_log_domain_unregister(etch_log);
+	eina_log_domain_unregister(etch_log_dom_global);
+        etch_log_dom_global = -1;
 	eina_shutdown();
 done:
 	_init_count--;

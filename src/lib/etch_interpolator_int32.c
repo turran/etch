@@ -20,7 +20,7 @@
 /* this file was copied from uint32, does it make sense to have both ?
  */
 /*============================================================================*
- *                                  Local                                     * 
+ *                                  Local                                     *
  *============================================================================*/
 static void _discrete(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res, void *data)
 {
@@ -47,12 +47,12 @@ static void _cosin(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res, void 
 {
 	double m2;
 	int32_t a, b;
-		
+
 	a = da->data.i32;
 	b = db->data.i32;
-	
+
 	m2 = (1 - cos(m * M_PI))/2;
-	
+
 	res->data.i32 = ceil((double)(a * (1 - m2) + b * m2));
 }
 
@@ -63,11 +63,11 @@ static void _bquad(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res, void 
 
 	a = da->data.i32;
 	b = db->data.i32;
-	
+
 	res->data.i32 =  (1 - m) * (1 - m) * a + 2 * m * (1 - m) * (q->cp.data.i32) + m * m * b;
 }
 /*============================================================================*
- *                                 Global                                     * 
+ *                                 Global                                     *
  *============================================================================*/
 Etch_Interpolator etch_interpolator_int32 = {
 	.funcs[ETCH_ANIMATION_DISCRETE] = _discrete,
