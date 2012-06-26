@@ -18,7 +18,7 @@
 #include "Etch.h"
 #include "etch_private.h"
 /*============================================================================*
- *                                  Local                                     * 
+ *                                  Local                                     *
  *============================================================================*/
 static void _discrete(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res, void *data)
 {
@@ -28,10 +28,10 @@ static void _linear(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res, void
 {
 	double r;
 	uint32_t a, b;
-	
+
 	a = da->data.u32;
 	b = db->data.u32;
-	
+
 	/* handle specific case where a and b are equal (constant) */
 	if (a == b)
 	{
@@ -46,12 +46,12 @@ static void _cosin(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res, void 
 {
 	double m2;
 	uint32_t a, b;
-		
+
 	a = da->data.u32;
 	b = db->data.u32;
-	
+
 	m2 = (1 - cos(m * M_PI))/2;
-	
+
 	res->data.u32 = ceil((double)(a * (1 - m2) + b * m2));
 }
 
@@ -59,14 +59,14 @@ static void _bquad(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res, void 
 {
 	Etch_Animation_Quadratic *q = data;
 	uint32_t a, b;
-		
+
 	a = da->data.u32;
 	b = db->data.u32;
-	
+
 	res->data.u32 =  (1 - m) * (1 - m) * a + 2 * m * (1 - m) * (q->cp.data.u32) + m * m * b;
 }
 /*============================================================================*
- *                                 Global                                     * 
+ *                                 Global                                     *
  *============================================================================*/
 Etch_Interpolator etch_interpolator_uint32 = {
 	.funcs[ETCH_ANIMATION_DISCRETE] = _discrete,
