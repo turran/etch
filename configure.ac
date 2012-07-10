@@ -34,10 +34,10 @@ AC_CANONICAL_HOST
 EFL_ETCH_BUILD=""
 case "$host_os" in
    mingw*)
-      EFL_ETCH_BUILD="-DEFL_ETCH_BUILD"
+      ETCH_BUILD="-DETCH_BUILD"
    ;;
 esac
-AC_SUBST([EFL_ETCH_BUILD])
+AC_SUBST([ETCH_BUILD])
 
 requirements_etch="eina >= 1.0.0"
 AC_SUBST([requirements_etch])

@@ -3,11 +3,19 @@
 #include <sys/time.h>
 #include <signal.h>
 
+#ifdef _WIN32
+# include <windows.h>
+#endif
+
 #include "Etch.h"
 
 /* Helper utility to test properties, animations, etc */
 
+#ifdef _WIN32
+HANDLE timer = NULL;
+#else
 int _timer_event = 0;
+#endif
 
 void _uint32_cb(Etch_Animation_Keyframe *k, const Etch_Data *curr, const Etch_Data *prev, void *data)
 {
@@ -25,6 +33,16 @@ void _string_cb(Etch_Animation_Keyframe *k, const Etch_Data *curr, const Etch_Da
 }
 
 
+#ifdef _WIN32
+void timer_setup(void)
+{
+	LARGE_INTEGER time;
+
+	time.QuadPart = 100000 / 3;
+	timer = CreateWaitableTimer(NULL, TRUE, "WaitableTimer");
+	SetWaitableTimer(timer, &time, 0, NULL, NULL, 0);
+}
+#else
 /* Timer function */
 void timer_signal_cb(int s)
 {
@@ -47,6 +65,7 @@ void timer_setup(void)
 	sigaction(SIGALRM, &sact, NULL);
 	setitimer(ITIMER_REAL, &value, NULL);
 }
+#endif
 
 void animation_uint32_setup(Etch *e)
 {
@@ -161,12 +180,18 @@ int main(void)
 	/* to exit the main loop we should check that the etch animation has finished */
 	while (!(etch_timer_has_end(e)))
 	{
+#ifdef _WIN32
+		WaitForSingleObject(timer, INFINITE);
+		/* send a tick to etch :) and wait for events */
+		etch_timer_tick(e);
+#else
 		if (_timer_event)
 		{
 			/* send a tick to etch :) and wait for events */
 			etch_timer_tick(e);
 			_timer_event = 0;
 		}
+#endif
 	}
 	etch_delete(e);
 

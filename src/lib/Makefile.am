@@ -3,6 +3,7 @@ MAINTAINERCLEANFILES = Makefile.in
 AM_CPPFLAGS = \
 -I$(top_srcdir)/src/include \
 -I$(top_builddir)/src/include \
+@ETCH_BUILD@ \
 @ETCH_CFLAGS@
 
 lib_LTLIBRARIES = libetch.la
