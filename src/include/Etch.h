@@ -178,6 +178,7 @@ EAPI Etch_Data_Type etch_animation_data_type_get(Etch_Animation *a);
 EAPI void etch_animation_disable(Etch_Animation *a);
 EAPI void etch_animation_enable(Etch_Animation *a);
 EAPI Eina_Bool etch_animation_enabled(Etch_Animation *a);
+EAPI void etch_animation_offset_add(Etch_Animation *a, Etch_Time inc);
 EAPI Etch * etch_animation_etch_get(Etch_Animation *a);
 EAPI Eina_Iterator * etch_animation_iterator_get(Etch_Animation *a);
 EAPI void etch_animation_data_get(Etch_Animation *a, Etch_Data *v);
