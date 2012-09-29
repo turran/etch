@@ -24,10 +24,33 @@
  * etc_timer_notify(Etch *)
  * + maybe remove the _timer_ prefix?
  * TODO remove every double and use Etch_Time
+ * TODO to support external animators
+ * 0. define a new "external type" for etch data (*DONE*)
+ * 1. move the interpolators here (*DONE*)
+ * 2. the animation_new should receive the interpolator itself, not only the data type (*DONE*)
+ * 4. when animating dont use the local _interpolators but the pointer to the interpolator (*DONE*)
+ * 5. We should export the interpolator API
  */
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+extern Etch_Interpolator etch_interpolator_uint32;
+extern Etch_Interpolator etch_interpolator_int32;
+extern Etch_Interpolator etch_interpolator_argb;
+extern Etch_Interpolator etch_interpolator_string;
+extern Etch_Interpolator etch_interpolator_float;
+extern Etch_Interpolator etch_interpolator_double;
+
+static Etch_Interpolator *_interpolators[ETCH_DATATYPES] = {
+	[ETCH_UINT32] = &etch_interpolator_uint32,
+	[ETCH_INT32] = &etch_interpolator_int32,
+	[ETCH_ARGB] = &etch_interpolator_argb,
+	[ETCH_STRING] = &etch_interpolator_string,
+	[ETCH_FLOAT] = &etch_interpolator_float,
+	[ETCH_DOUBLE] = &etch_interpolator_double,
+	[ETCH_EXTERNAL] = NULL,
+};
+
 #define DEFAULT_FPS 30
 
 static int _init_count = 0;
@@ -281,12 +304,26 @@ EAPI Etch_Animation * etch_animation_add(Etch *e, Etch_Data_Type dtype,
 		void *data)
 {
 	Etch_Animation *a;
+	Etch_Interpolator *interpolator;
 
-	a = etch_animation_new(e, dtype, cb, start, stop, data);
+	interpolator = _interpolators[dtype];
+	a = etch_animation_new(e, dtype, interpolator, cb, start, stop, data);
 	e->animations = eina_inlist_append(e->animations, EINA_INLIST_GET(a));
 
 	return a;
 }
+
+#if 0
+EAPI Etch_Animation * etch_animation_external_add(Etch *e,
+		Etch_Interpolator *interpolator,
+		Etch_Animation_Callback cb,
+		Etch_Animation_State_Callback start,
+		Etch_Animation_State_Callback stop,
+		void *data)
+{
+
+}
+#endif
 
 /**
  * Remove the animation from the Etch instance

@@ -96,6 +96,7 @@ typedef enum _Etch_Data_Type
 	ETCH_DOUBLE, /**< Double precision float */
 	ETCH_ARGB, /**< Color (Alpha, Red, Green, Blue) of 32 bits */
 	ETCH_STRING, /**< String type */
+	ETCH_EXTERNAL, /**< External (user provided) type */
 	ETCH_DATATYPES, /**< Number of data types */
 } Etch_Data_Type;
 
@@ -112,6 +113,7 @@ typedef struct _Etch_Data
 		double d;
 		unsigned int argb;
 		char *string;
+		void *external;
 	} data;
 } Etch_Data;
 

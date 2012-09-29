@@ -31,12 +31,6 @@
  * - define animatinos based on two properties: PERIODIC, UNIQUE, PERIODIC_MIRROR
  * - the integer return values of the interpolators should be rounded?
  */
-extern Etch_Interpolator etch_interpolator_uint32;
-extern Etch_Interpolator etch_interpolator_int32;
-extern Etch_Interpolator etch_interpolator_argb;
-extern Etch_Interpolator etch_interpolator_string;
-extern Etch_Interpolator etch_interpolator_float;
-extern Etch_Interpolator etch_interpolator_double;
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
@@ -83,15 +77,6 @@ static void _animation_debug(Etch_Animation *a)
 		l = l->next;
 	}
 }
-
-Etch_Interpolator *_interpolators[ETCH_DATATYPES] = {
-	[ETCH_UINT32] = &etch_interpolator_uint32,
-	[ETCH_INT32] = &etch_interpolator_int32,
-	[ETCH_ARGB] = &etch_interpolator_argb,
-	[ETCH_STRING] = &etch_interpolator_string,
-	[ETCH_FLOAT] = &etch_interpolator_float,
-	[ETCH_DOUBLE] = &etch_interpolator_double,
-};
 
 static Eina_Bool _iterator_next(Etch_Animation_Iterator *it, void **data)
 {
@@ -227,12 +212,7 @@ void etch_animation_animate(Etch_Animation *a, Etch_Time curr)
 			/* store old value */
 			old = a->curr;
 			/* interpolate the new value */
-			if (!_interpolators[a->dtype])
-			{
-				WRN("No interpolator available for type %d\n", a->dtype);
-				return;
-			}
-			ifnc = _interpolators[a->dtype]->funcs[start->type];
+			ifnc = a->interpolator->funcs[start->type];
 			if (!ifnc)
 				return;
 
@@ -259,7 +239,9 @@ void etch_animation_animate(Etch_Animation *a, Etch_Time curr)
 	}
 }
 
-Etch_Animation * etch_animation_new(Etch *e, Etch_Data_Type dtype,
+Etch_Animation * etch_animation_new(Etch *e,
+		Etch_Data_Type dtype,
+		Etch_Interpolator *interpolator,
 		Etch_Animation_Callback cb,
 		Etch_Animation_State_Callback start,
 		Etch_Animation_State_Callback stop,
@@ -272,6 +254,7 @@ Etch_Animation * etch_animation_new(Etch *e, Etch_Data_Type dtype,
 	a->m = -1; /* impossible, so the first keyframe will overwrite this */
 	a->start = UINT64_MAX;
 	a->dtype = dtype;
+	a->interpolator = interpolator;
 	a->cb = cb;
 	a->data = data;
 	a->repeat = 1;
