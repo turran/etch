@@ -17,24 +17,24 @@ HANDLE timer = NULL;
 int _timer_event = 0;
 #endif
 
-void _uint32_cb(Etch_Animation_Keyframe *k, const Etch_Data *curr, const Etch_Data *prev, void *data)
+static void _uint32_cb(Etch_Animation_Keyframe *k, const Etch_Data *curr, const Etch_Data *prev, void *data)
 {
 	printf("[UINT32] curr %d old %d\n", curr->data.u32, prev->data.u32);
 }
 
-void _color_cb(Etch_Animation_Keyframe *k, const Etch_Data *curr, const Etch_Data *prev, void *data)
+static void _color_cb(Etch_Animation_Keyframe *k, const Etch_Data *curr, const Etch_Data *prev, void *data)
 {
 	printf("[ARGB] curr %08x old %08x\n", curr->data.argb, prev->data.argb);
 }
 
-void _string_cb(Etch_Animation_Keyframe *k, const Etch_Data *curr, const Etch_Data *prev, void *data)
+static void _string_cb(Etch_Animation_Keyframe *k, const Etch_Data *curr, const Etch_Data *prev, void *data)
 {
 	printf("[STRING] curr %s old %s\n", curr->data.string, prev->data.string);
 }
 
 
 #ifdef _WIN32
-void timer_setup(void)
+static void timer_setup(void)
 {
 	LARGE_INTEGER time;
 
@@ -44,12 +44,12 @@ void timer_setup(void)
 }
 #else
 /* Timer function */
-void timer_signal_cb(int s)
+static void timer_signal_cb(int s)
 {
 	_timer_event = 1;
 }
 
-void timer_setup(void)
+static void timer_setup(void)
 {
 	struct sigaction sact;
 	struct itimerval value;
@@ -67,7 +67,7 @@ void timer_setup(void)
 }
 #endif
 
-void animation_uint32_setup(Etch *e)
+static void animation_uint32_setup(Etch *e)
 {
 	Etch_Animation *ea;
 	Etch_Animation_Keyframe *ek;
@@ -115,7 +115,7 @@ void animation_uint32_setup(Etch *e)
 	etch_animation_enable(ea);
 }
 
-void animation_argb_setup(Etch *e)
+static void animation_argb_setup(Etch *e)
 {
 	Etch_Animation *ea;
 	Etch_Animation_Keyframe *ek;
@@ -138,7 +138,7 @@ void animation_argb_setup(Etch *e)
 	etch_animation_enable(ea);
 }
 
-void animation_string_setup(Etch *e)
+static void animation_string_setup(Etch *e)
 {
 	Etch_Animation *ea;
 	Etch_Animation_Keyframe *ek;
