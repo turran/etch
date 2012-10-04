@@ -119,6 +119,34 @@ typedef struct _Etch_Data
 
 /**
  * @}
+ * @defgroup Etch_Interpolators_Group Interpolators
+ * @{
+ */
+
+/* TODO instead of void *data, pass the Etch_Animation_Type_Data */
+typedef void (*Etch_Interpolator_Func)(Etch_Data *a, Etch_Data *b, double m, Etch_Data *res, void *data);
+
+/**
+ * FIXME rename this to Etch_Interpolator_Type
+ * Possible animation types
+ */
+typedef enum _Etch_Animation_Type
+{
+	ETCH_ANIMATION_DISCRETE, /**< The values are not interpolated, just discrete values */
+	ETCH_ANIMATION_LINEAR, /**< Linear interpolation */
+	ETCH_ANIMATION_COSIN, /***< Cosin interpolation */
+	ETCH_ANIMATION_QUADRATIC, /**< Quadratic bezier interpolation */
+	ETCH_ANIMATION_CUBIC, /**< Cubic bezier interpolation */
+	ETCH_ANIMATION_TYPES
+} Etch_Animation_Type;
+
+typedef struct _Etch_Interpolator
+{
+	Etch_Interpolator_Func funcs[ETCH_ANIMATION_TYPES];
+} Etch_Interpolator;
+
+/**
+ * @}
  * @defgroup Etch_Animations_Group Animations
  * Each animation on Etch is done through an Etch_Animation object.
  * An Etch_Animation can only animate one value type, that is,
@@ -133,19 +161,6 @@ typedef struct _Etch_Data
  */
 typedef struct _Etch_Animation Etch_Animation; /**< Animation Opaque Handler */
 typedef struct _Etch_Animation_Keyframe Etch_Animation_Keyframe; /**< Animation Keyframe Opaque Handler */
-
-/**
- * Possible animation types
- */
-typedef enum _Etch_Animation_Type
-{
-	ETCH_ANIMATION_DISCRETE, /**< The values are not interpolated, just discrete values */
-	ETCH_ANIMATION_LINEAR, /**< Linear interpolation */
-	ETCH_ANIMATION_COSIN, /***< Cosin interpolation */
-	ETCH_ANIMATION_QUADRATIC, /**< Quadratic bezier interpolation */
-	ETCH_ANIMATION_CUBIC, /**< Cubic bezier interpolation */
-	ETCH_ANIMATION_TYPES
-} Etch_Animation_Type;
 
 /**
  * Function definition for freeing user data

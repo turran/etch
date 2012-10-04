@@ -306,8 +306,11 @@ EAPI Etch_Animation * etch_animation_add(Etch *e, Etch_Data_Type dtype,
 	Etch_Animation *a;
 	Etch_Interpolator *interpolator;
 
+	if (dtype >= ETCH_EXTERNAL)
+		return NULL; 
+
 	interpolator = _interpolators[dtype];
-	a = etch_animation_new(e, dtype, interpolator, cb, start, stop, data);
+	a = etch_animation_new(e, dtype, interpolator, cb, start, stop, NULL, NULL, data);
 	e->animations = eina_inlist_append(e->animations, EINA_INLIST_GET(a));
 
 	return a;
@@ -319,9 +322,14 @@ EAPI Etch_Animation * etch_animation_external_add(Etch *e,
 		Etch_Animation_Callback cb,
 		Etch_Animation_State_Callback start,
 		Etch_Animation_State_Callback stop,
+		void *prev,
+		void *current,
 		void *data)
 {
+	a = etch_animation_new(e, ETCH_EXTERNAL, interpolator, cb, start, stop, prev, current, data);
+	e->animations = eina_inlist_append(e->animations, EINA_INLIST_GET(a));
 
+	return a;
 }
 #endif
 

@@ -209,8 +209,6 @@ void etch_animation_animate(Etch_Animation *a, Etch_Time curr)
 				a->cb(start, &a->curr, &a->curr, a->data);
 				return;
 			}
-			/* store old value */
-			old = a->curr;
 			/* interpolate the new value */
 			ifnc = a->interpolator->funcs[start->type];
 			if (!ifnc)
@@ -232,7 +230,21 @@ void etch_animation_animate(Etch_Animation *a, Etch_Time curr)
 			}
 			ifnc(&(start->value), &(end->value), m, &a->curr, &data);
 			/* once the value has been set, call the callback */
-			a->cb(start, &a->curr, &old, a->data);
+			a->cb(start, &a->curr, &a->prev, a->data);
+			/* swap the values */
+			if (a->dtype == ETCH_EXTERNAL)
+			{
+				void *tmp;
+
+				tmp = a->prev.data.external;
+				a->prev.data.external = a->curr.data.external;
+				a->curr.data.external = tmp;
+			}
+			else
+			{
+				a->prev = a->curr;
+			}
+
 			return;
 		}
 		l = l->next;
@@ -245,6 +257,8 @@ Etch_Animation * etch_animation_new(Etch *e,
 		Etch_Animation_Callback cb,
 		Etch_Animation_State_Callback start,
 		Etch_Animation_State_Callback stop,
+		void *prev,
+		void *curr,
 		void *data)
 {
 	Etch_Animation *a;
@@ -261,6 +275,16 @@ Etch_Animation * etch_animation_new(Etch *e,
 	a->etch = e;
 	a->start_cb = start;
 	a->stop_cb = stop;
+	/* in case of external animations we need to keep
+	 * the data
+	 */
+	a->prev.type = dtype;
+	a->curr.type = dtype;
+	if (dtype == ETCH_EXTERNAL)
+	{
+		a->prev.data.external = prev;
+		a->curr.data.external = curr;
+	}
 
 	return a;
 }

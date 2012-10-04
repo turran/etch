@@ -50,13 +50,6 @@
 
 extern int etch_log_dom_global;
 
-typedef void (*Etch_Interpolator_Func)(Etch_Data *a, Etch_Data *b, double m, Etch_Data *res, void *data);
-typedef struct _Etch_Interpolator
-{
-	Etch_Interpolator_Func funcs[ETCH_ANIMATION_TYPES];
-} Etch_Interpolator;
-
-
 /**
  *
  */
@@ -87,6 +80,13 @@ typedef struct _Etch_Animation_Quadratic
 	Etch_Data cp; /** Control point */
 } Etch_Animation_Quadratic;
 
+typedef union _Etch_Animation_Type_Data
+{
+	Etch_Animation_Cubic c;
+	Etch_Animation_Quadratic q;
+} Etch_Animation_Type_Data;
+
+
 /**
  * An animation mark is a defined state on the timeline of an animation. It sets
  * that a given time a property should have the specified value.
@@ -101,6 +101,7 @@ struct _Etch_Animation_Keyframe
 	 * to avoid substracting them every time?
 	 */
 	Etch_Animation_Type type; /** type of interpolation between this mark and the next */
+	/* FIXME remove this and use the Animation_Type_Data */
 	Etch_Animation_Quadratic q; /** quadratic interpolation specific data */
 	Etch_Animation_Cubic c; /** cubic interpolation specific data */
 	void *data;
@@ -124,6 +125,7 @@ struct _Etch_Animation
 	Etch_Time end; /** end time already */
 	/* TODO make m a fixed point var of type 1.31 */
 	double m; /** last interpolator value in the range [0,1] */
+	Etch_Data prev; /** previous value in the whole animation */
 	Etch_Data curr; /** current value in the whole animation */
 	unsigned int repeat; /** number of times the animation will repeat, 0 for infinite */
 	Etch_Data_Type dtype; /** animations only animates data types, no properties */
@@ -138,6 +140,6 @@ struct _Etch_Animation
 };
 
 void etch_animation_animate(Etch_Animation *a, Etch_Time curr);
-Etch_Animation * etch_animation_new(Etch *e, Etch_Data_Type dtype, Etch_Interpolator *interpolator, Etch_Animation_Callback cb, Etch_Animation_State_Callback start, Etch_Animation_State_Callback stop, void *data);
+Etch_Animation * etch_animation_new(Etch *e, Etch_Data_Type dtype, Etch_Interpolator *interpolator, Etch_Animation_Callback cb, Etch_Animation_State_Callback start, Etch_Animation_State_Callback stop, void *prev, void *curr, void *data);
 
 #endif /*ETCH_PRIVATE_H_*/
