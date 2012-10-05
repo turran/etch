@@ -20,7 +20,8 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-static void _discrete(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res, void *data)
+static void _discrete(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res,
+		Etch_Interpolator_Type_Data *data)
 {
 	res->data.string = da->data.string;
 }
@@ -28,5 +29,5 @@ static void _discrete(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res, vo
  *                                 Global                                     *
  *============================================================================*/
 Etch_Interpolator etch_interpolator_string = {
-	.funcs[ETCH_ANIMATION_DISCRETE] = _discrete,
+	.funcs[ETCH_INTERPOLATOR_DISCRETE] = _discrete,
 };

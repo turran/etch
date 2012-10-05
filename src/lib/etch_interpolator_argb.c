@@ -20,11 +20,13 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-static void _discrete(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res, void *data)
+static void _discrete(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res,
+		Etch_Interpolator_Type_Data *data)
 {
 	res->data.argb = da->data.argb;
 }
-static void _linear(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res, void *data)
+static void _linear(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res,
+		Etch_Interpolator_Type_Data *data)
 {
 	unsigned int range;
 	unsigned int a, b, ag, rb;
@@ -50,6 +52,6 @@ static void _linear(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res, void
  *                                 Global                                     *
  *============================================================================*/
 Etch_Interpolator etch_interpolator_argb = {
-	.funcs[ETCH_ANIMATION_DISCRETE] = _discrete,
-	.funcs[ETCH_ANIMATION_LINEAR] = _linear,
+	.funcs[ETCH_INTERPOLATOR_DISCRETE] = _discrete,
+	.funcs[ETCH_INTERPOLATOR_LINEAR] = _linear,
 };

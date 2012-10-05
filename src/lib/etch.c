@@ -174,10 +174,10 @@ EAPI void etch_init(void)
 	}
 done:
 	_init_count++;
+	return;
 
-  shutdown_eina:
+shutdown_eina:
 	eina_shutdown();
-	--_init_count;
 }
 /**
  * Shutdown Etch.
@@ -316,7 +316,17 @@ EAPI Etch_Animation * etch_animation_add(Etch *e, Etch_Data_Type dtype,
 	return a;
 }
 
-#if 0
+/**
+ * Create a new external animation
+ * @param e The Etch instance to add the animation to
+ * @param interpolator The interpolator to use
+ * @param cb Function called whenever the value changes
+ * @param start Function called whenever the animation starts
+ * @param stop Function called whenever the animation stops
+ * @param prev User provided data to be used on the prev parameter of the cb
+ * @param curr User provided data to be used on the curr parameter of the cb
+ * @param data User provided data that passed to the callbacks
+ */
 EAPI Etch_Animation * etch_animation_external_add(Etch *e,
 		Etch_Interpolator *interpolator,
 		Etch_Animation_Callback cb,
@@ -326,12 +336,12 @@ EAPI Etch_Animation * etch_animation_external_add(Etch *e,
 		void *current,
 		void *data)
 {
+	Etch_Animation *a;
 	a = etch_animation_new(e, ETCH_EXTERNAL, interpolator, cb, start, stop, prev, current, data);
 	e->animations = eina_inlist_append(e->animations, EINA_INLIST_GET(a));
 
 	return a;
 }
-#endif
 
 /**
  * Remove the animation from the Etch instance

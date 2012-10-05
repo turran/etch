@@ -76,37 +76,37 @@ static void animation_uint32_setup(Etch *e)
 	ea = etch_animation_add(e, ETCH_UINT32, _uint32_cb, NULL, NULL, NULL);
 	/* first keyframe */
 	ek = etch_animation_keyframe_add(ea);
-	etch_animation_keyframe_type_set(ek, ETCH_ANIMATION_COSIN);
+	etch_animation_keyframe_type_set(ek, ETCH_INTERPOLATOR_COSIN);
 	data.data.u32 = 10;
 	etch_animation_keyframe_value_set(ek, &data);
 	etch_animation_keyframe_time_set(ek, 3 * ETCH_SECOND + 3015 * ETCH_MSECOND);
 	/* second keyframe */
 	ek = etch_animation_keyframe_add(ea);
-	etch_animation_keyframe_type_set(ek, ETCH_ANIMATION_LINEAR);
+	etch_animation_keyframe_type_set(ek, ETCH_INTERPOLATOR_LINEAR);
 	data.data.u32 = 40;
 	etch_animation_keyframe_value_set(ek, &data);
 	etch_animation_keyframe_time_set(ek, 25 * ETCH_SECOND + 1237 * ETCH_MSECOND);
 	/* third keyframe */
 	ek = etch_animation_keyframe_add(ea);
-	etch_animation_keyframe_type_set(ek, ETCH_ANIMATION_LINEAR);
+	etch_animation_keyframe_type_set(ek, ETCH_INTERPOLATOR_LINEAR);
 	data.data.u32 = 30;
 	etch_animation_keyframe_value_set(ek, &data);
 	etch_animation_keyframe_time_set(ek, 15 * ETCH_SECOND + 2530 * ETCH_MSECOND);
 	/* fourth keyframe */
 	ek = etch_animation_keyframe_add(ea);
-	etch_animation_keyframe_type_set(ek, ETCH_ANIMATION_DISCRETE);
+	etch_animation_keyframe_type_set(ek, ETCH_INTERPOLATOR_DISCRETE);
 	data.data.u32 = 25;
 	etch_animation_keyframe_value_set(ek, &data);
 	etch_animation_keyframe_time_set(ek, 1 * ETCH_SECOND);
 	/* fifth keyframe */
 	ek = etch_animation_keyframe_add(ea);
-	etch_animation_keyframe_type_set(ek, ETCH_ANIMATION_DISCRETE);
+	etch_animation_keyframe_type_set(ek, ETCH_INTERPOLATOR_DISCRETE);
 	data.data.u32 = 15;
 	etch_animation_keyframe_value_set(ek, &data);
 	etch_animation_keyframe_time_set(ek, 2 * ETCH_SECOND);
 
 	ek = etch_animation_keyframe_add(ea);
-	etch_animation_keyframe_type_set(ek, ETCH_ANIMATION_DISCRETE);
+	etch_animation_keyframe_type_set(ek, ETCH_INTERPOLATOR_DISCRETE);
 	data.data.u32 = 25;
 	etch_animation_keyframe_value_set(ek, &data);
 	etch_animation_keyframe_time_set(ek, 3 * ETCH_SECOND);
@@ -124,13 +124,13 @@ static void animation_argb_setup(Etch *e)
 	ea = etch_animation_add(e, ETCH_ARGB, _color_cb, NULL, NULL, NULL);
 	/* first keyframe */
 	ek = etch_animation_keyframe_add(ea);
-	etch_animation_keyframe_type_set(ek, ETCH_ANIMATION_LINEAR);
+	etch_animation_keyframe_type_set(ek, ETCH_INTERPOLATOR_LINEAR);
 	data.data.argb = 0xff000000;
 	etch_animation_keyframe_value_set(ek, &data);
 	etch_animation_keyframe_time_set(ek, 1 * ETCH_SECOND);
 	/* second keyframe */
 	ek = etch_animation_keyframe_add(ea);
-	etch_animation_keyframe_type_set(ek, ETCH_ANIMATION_LINEAR);
+	etch_animation_keyframe_type_set(ek, ETCH_INTERPOLATOR_LINEAR);
 	data.data.argb = 0x00ff00ff;
 	etch_animation_keyframe_value_set(ek, &data);
 	etch_animation_keyframe_time_set(ek, 5 * ETCH_SECOND);
@@ -147,19 +147,19 @@ static void animation_string_setup(Etch *e)
 	ea = etch_animation_add(e, ETCH_STRING, _string_cb, NULL, NULL, NULL);
 	/* first keyframe */
 	ek = etch_animation_keyframe_add(ea);
-	etch_animation_keyframe_type_set(ek, ETCH_ANIMATION_DISCRETE);
+	etch_animation_keyframe_type_set(ek, ETCH_INTERPOLATOR_DISCRETE);
 	data.data.string = "hello";
 	etch_animation_keyframe_value_set(ek, &data);
 	etch_animation_keyframe_time_set(ek, 1 * ETCH_SECOND);
 	/* second keyframe */
 	ek = etch_animation_keyframe_add(ea);
-	etch_animation_keyframe_type_set(ek, ETCH_ANIMATION_DISCRETE);
+	etch_animation_keyframe_type_set(ek, ETCH_INTERPOLATOR_DISCRETE);
 	data.data.string = "bye";
 	etch_animation_keyframe_value_set(ek, &data);
 	etch_animation_keyframe_time_set(ek, 5 * ETCH_SECOND);
 	/* third keyframe */
 	ek = etch_animation_keyframe_add(ea);
-	etch_animation_keyframe_type_set(ek, ETCH_ANIMATION_DISCRETE);
+	etch_animation_keyframe_type_set(ek, ETCH_INTERPOLATOR_DISCRETE);
 	data.data.string = "nothing";
 	etch_animation_keyframe_value_set(ek, &data);
 	etch_animation_keyframe_time_set(ek, 8 * ETCH_SECOND);
@@ -170,6 +170,8 @@ static void animation_string_setup(Etch *e)
 int main(void)
 {
 	Etch *e;
+
+	etch_init();
 
 	e = etch_new();
 	etch_timer_fps_set(e, 30);
@@ -194,6 +196,7 @@ int main(void)
 #endif
 	}
 	etch_delete(e);
+	etch_shutdown();
 
 	return 0;
 }

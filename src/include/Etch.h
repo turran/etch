@@ -123,26 +123,49 @@ typedef struct _Etch_Data
  * @{
  */
 
-/* TODO instead of void *data, pass the Etch_Animation_Type_Data */
-typedef void (*Etch_Interpolator_Func)(Etch_Data *a, Etch_Data *b, double m, Etch_Data *res, void *data);
+/**
+ * Specific data needed for cubic bezier animations
+ * TODO dont use etch data on the quadratic or cubic versions, just 0-1 values
+ */
+typedef struct _Etch_Animation_Cubic
+{
+	Etch_Data cp1; /** First control point */
+	Etch_Data cp2; /** Second control point */
+} Etch_Animation_Cubic;
 
 /**
- * FIXME rename this to Etch_Interpolator_Type
- * Possible animation types
+ * Specific data needed for quadratic bezier animations
  */
-typedef enum _Etch_Animation_Type
+typedef struct _Etch_Animation_Quadratic
 {
-	ETCH_ANIMATION_DISCRETE, /**< The values are not interpolated, just discrete values */
-	ETCH_ANIMATION_LINEAR, /**< Linear interpolation */
-	ETCH_ANIMATION_COSIN, /***< Cosin interpolation */
-	ETCH_ANIMATION_QUADRATIC, /**< Quadratic bezier interpolation */
-	ETCH_ANIMATION_CUBIC, /**< Cubic bezier interpolation */
-	ETCH_ANIMATION_TYPES
-} Etch_Animation_Type;
+	Etch_Data cp; /** Control point */
+} Etch_Animation_Quadratic;
+
+typedef union _Etch_Interpolator_Type_Data
+{
+	Etch_Animation_Cubic c;
+	Etch_Animation_Quadratic q;
+} Etch_Interpolator_Type_Data;
+
+/**
+ * Possible interpolator types
+ */
+typedef enum _Etch_Interpolator_Type
+{
+	ETCH_INTERPOLATOR_DISCRETE, /**< The values are not interpolated, just discrete values */
+	ETCH_INTERPOLATOR_LINEAR, /**< Linear interpolation */
+	ETCH_INTERPOLATOR_COSIN, /***< Cosin interpolation */
+	ETCH_INTERPOLATOR_QUADRATIC, /**< Quadratic bezier interpolation */
+	ETCH_INTERPOLATOR_CUBIC, /**< Cubic bezier interpolation */
+	ETCH_INTERPOLATOR_TYPES
+} Etch_Interpolator_Type;
+
+typedef void (*Etch_Interpolator_Func)(Etch_Data *a, Etch_Data *b, double m, Etch_Data *res, Etch_Interpolator_Type_Data *data);
+
 
 typedef struct _Etch_Interpolator
 {
-	Etch_Interpolator_Func funcs[ETCH_ANIMATION_TYPES];
+	Etch_Interpolator_Func funcs[ETCH_INTERPOLATOR_TYPES];
 } Etch_Interpolator;
 
 /**
@@ -188,6 +211,14 @@ EAPI Etch_Animation * etch_animation_add(Etch *e, Etch_Data_Type dtype,
 		Etch_Animation_State_Callback start,
 		Etch_Animation_State_Callback stop,
 		void *data);
+EAPI Etch_Animation * etch_animation_external_add(Etch *e,
+		Etch_Interpolator *interpolator,
+		Etch_Animation_Callback cb,
+		Etch_Animation_State_Callback start,
+		Etch_Animation_State_Callback stop,
+		void *prev,
+		void *current,
+		void *data);
 EAPI void etch_animation_remove(Etch *e, Etch_Animation *a);
 
 EAPI void etch_animation_delete(Etch_Animation *a);
@@ -205,8 +236,8 @@ EAPI Etch_Animation_Keyframe * etch_animation_keyframe_get(Etch_Animation *a, un
 
 EAPI Etch_Animation_Keyframe * etch_animation_keyframe_add(Etch_Animation *a);
 EAPI void etch_animation_keyframe_remove(Etch_Animation *a, Etch_Animation_Keyframe *m);
-EAPI void etch_animation_keyframe_type_set(Etch_Animation_Keyframe *m, Etch_Animation_Type t);
-EAPI Etch_Animation_Type etch_animation_keyframe_type_get(Etch_Animation_Keyframe *m);
+EAPI void etch_animation_keyframe_type_set(Etch_Animation_Keyframe *m, Etch_Interpolator_Type t);
+EAPI Etch_Interpolator_Type etch_animation_keyframe_type_get(Etch_Animation_Keyframe *m);
 EAPI void etch_animation_keyframe_data_set(Etch_Animation_Keyframe *k, void *data, Etch_Free free);
 EAPI void * etch_animation_keyframe_data_get(Etch_Animation_Keyframe *k);
 EAPI void etch_animation_keyframe_time_set(Etch_Animation_Keyframe *m, Etch_Time t);

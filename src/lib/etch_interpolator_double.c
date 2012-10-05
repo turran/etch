@@ -22,11 +22,13 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-static void _discrete(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res, void *data)
+static void _discrete(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res,
+		Etch_Interpolator_Type_Data *data)
 {
 	res->data.d = da->data.d;
 }
-static void _linear(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res, void *data)
+static void _linear(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res,
+		Etch_Interpolator_Type_Data *data)
 {
 	double r;
 	double a, b;
@@ -43,7 +45,8 @@ static void _linear(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res, void
 	res->data.d = r;
 }
 
-static void _cosin(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res, void *data)
+static void _cosin(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res,
+		Etch_Interpolator_Type_Data *data)
 {
 	double m2;
 	double a, b;
@@ -56,9 +59,10 @@ static void _cosin(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res, void 
 	res->data.d = ((double)(a * (1 - m2) + b * m2));
 }
 
-static void _bquad(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res, void *data)
+static void _bquad(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res,
+		Etch_Interpolator_Type_Data *data)
 {
-	Etch_Animation_Quadratic *q = data;
+	Etch_Animation_Quadratic *q = &data->q;
 	double a, b;
 
 	a = da->data.d;
@@ -70,8 +74,8 @@ static void _bquad(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res, void 
  *                                 Global                                     *
  *============================================================================*/
 Etch_Interpolator etch_interpolator_double = {
-	.funcs[ETCH_ANIMATION_DISCRETE] = _discrete,
-	.funcs[ETCH_ANIMATION_LINEAR] = _linear,
-	.funcs[ETCH_ANIMATION_COSIN] = _cosin,
-	.funcs[ETCH_ANIMATION_QUADRATIC] = _bquad,
+	.funcs[ETCH_INTERPOLATOR_DISCRETE] = _discrete,
+	.funcs[ETCH_INTERPOLATOR_LINEAR] = _linear,
+	.funcs[ETCH_INTERPOLATOR_COSIN] = _cosin,
+	.funcs[ETCH_INTERPOLATOR_QUADRATIC] = _bquad,
 };

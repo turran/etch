@@ -213,22 +213,7 @@ void etch_animation_animate(Etch_Animation *a, Etch_Time curr)
 			ifnc = a->interpolator->funcs[start->type];
 			if (!ifnc)
 				return;
-
-			/* pass the specific data */
-			switch (start->type)
-			{
-				case ETCH_ANIMATION_QUADRATIC:
-				data = &start->q;
-				break;
-
-				case ETCH_ANIMATION_CUBIC:
-				data = &start->c;
-				break;
-
-				default:
-				break;
-			}
-			ifnc(&(start->value), &(end->value), m, &a->curr, &data);
+			ifnc(&(start->value), &(end->value), m, &a->curr, &start->idata);
 			/* once the value has been set, call the callback */
 			a->cb(start, &a->curr, &a->prev, a->data);
 			/* swap the values */
@@ -251,6 +236,7 @@ void etch_animation_animate(Etch_Animation *a, Etch_Time curr)
 	}
 }
 
+/* TODO add the repeat callback with the an argument of the repeat count */
 Etch_Animation * etch_animation_new(Etch *e,
 		Etch_Data_Type dtype,
 		Etch_Interpolator *interpolator,
@@ -467,7 +453,7 @@ EAPI void etch_animation_offset_add(Etch_Animation *a, Etch_Time inc)
  * @param k The Etch_Animation_Keyframe
  * @param t The type of the interpolation
  */
-EAPI void etch_animation_keyframe_type_set(Etch_Animation_Keyframe *k, Etch_Animation_Type t)
+EAPI void etch_animation_keyframe_type_set(Etch_Animation_Keyframe *k, Etch_Interpolator_Type t)
 {
 	assert(k);
 	k->type = t;
@@ -476,7 +462,7 @@ EAPI void etch_animation_keyframe_type_set(Etch_Animation_Keyframe *k, Etch_Anim
  * Get the type of an animation keyframe
  * @param k The Etch_Animation_Keyframe
  */
-EAPI Etch_Animation_Type etch_animation_keyframe_type_get(Etch_Animation_Keyframe *k)
+EAPI Etch_Interpolator_Type etch_animation_keyframe_type_get(Etch_Animation_Keyframe *k)
 {
 	assert(k);
 	return k->type;
@@ -542,7 +528,7 @@ EAPI void etch_animation_keyframe_value_set(Etch_Animation_Keyframe *k, Etch_Dat
  */
 EAPI void etch_animation_keyframe_quadratic_value_set(Etch_Animation_Keyframe *k, Etch_Data *cp1)
 {
-	k->q.cp = *cp1;
+	k->idata.q.cp = *cp1;
 }
 /**
  * Sets the control point on a keyframe with a cubic interpolation type
@@ -553,8 +539,8 @@ EAPI void etch_animation_keyframe_quadratic_value_set(Etch_Animation_Keyframe *k
 EAPI void etch_animation_keyframe_cubic_value_set(Etch_Animation_Keyframe *k, Etch_Data *cp1,
 		Etch_Data *cp2)
 {
-	k->c.cp1 = *cp1;
-	k->c.cp2 = *cp2;
+	k->idata.c.cp1 = *cp1;
+	k->idata.c.cp2 = *cp2;
 }
 
 /**

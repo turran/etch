@@ -64,30 +64,6 @@ struct _Etch
 };
 
 /**
- * Specific data needed for cubic bezier animations
- */
-typedef struct _Etch_Animation_Cubic
-{
-	Etch_Data cp1; /** First control point */
-	Etch_Data cp2; /** Second control point */
-} Etch_Animation_Cubic;
-
-/**
- * Specific data needed for quadratic bezier animations
- */
-typedef struct _Etch_Animation_Quadratic
-{
-	Etch_Data cp; /** Control point */
-} Etch_Animation_Quadratic;
-
-typedef union _Etch_Animation_Type_Data
-{
-	Etch_Animation_Cubic c;
-	Etch_Animation_Quadratic q;
-} Etch_Animation_Type_Data;
-
-
-/**
  * An animation mark is a defined state on the timeline of an animation. It sets
  * that a given time a property should have the specified value.
  */
@@ -100,10 +76,8 @@ struct _Etch_Animation_Keyframe
 	/* TODO do we need to cache the diff between this keyframe and the next?
 	 * to avoid substracting them every time?
 	 */
-	Etch_Animation_Type type; /** type of interpolation between this mark and the next */
-	/* FIXME remove this and use the Animation_Type_Data */
-	Etch_Animation_Quadratic q; /** quadratic interpolation specific data */
-	Etch_Animation_Cubic c; /** cubic interpolation specific data */
+	Etch_Interpolator_Type type; /** type of interpolation between this mark and the next */
+	Etch_Interpolator_Type_Data idata; /** interpolator specific data */
 	void *data;
 	Etch_Free data_free;
 };
