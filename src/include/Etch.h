@@ -163,6 +163,10 @@ typedef enum _Etch_Interpolator_Type
 typedef void (*Etch_Interpolator_Func)(Etch_Data *a, Etch_Data *b, double m, Etch_Data *res, Etch_Interpolator_Type_Data *data);
 
 
+/*
+ * FIXME the interpolator can be reduced at the end
+ * into a single function only. the m value, is the one that changes between discrete, cosin, quadratic, etc
+ */
 typedef struct _Etch_Interpolator
 {
 	Etch_Interpolator_Func funcs[ETCH_INTERPOLATOR_TYPES];
