@@ -22,13 +22,10 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-static void _discrete(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res,
-		Etch_Interpolator_Type_Data *data)
-{
-	res->data.i32 = da->data.i32;
-}
-static void _linear(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res,
-		Etch_Interpolator_Type_Data *data)
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+void etch_interpolator_int32(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res)
 {
 	double r;
 	int32_t a, b;
@@ -44,38 +41,3 @@ static void _linear(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res,
 	r = ((1 - m) * a) + (m * b);
 	res->data.i32 = ceil(r);
 }
-
-static void _cosin(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res,
-		Etch_Interpolator_Type_Data *data)
-{
-	double m2;
-	int32_t a, b;
-
-	a = da->data.i32;
-	b = db->data.i32;
-
-	m2 = (1 - cos(m * M_PI))/2;
-
-	res->data.i32 = ceil((double)(a * (1 - m2) + b * m2));
-}
-
-static void _bquad(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res,
-		Etch_Interpolator_Type_Data *data)
-{
-	Etch_Animation_Quadratic *q = &data->q;
-	int32_t a, b;
-
-	a = da->data.i32;
-	b = db->data.i32;
-
-	res->data.i32 =  (1 - m) * (1 - m) * a + 2 * m * (1 - m) * (q->cp.data.i32) + m * m * b;
-}
-/*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
-Etch_Interpolator etch_interpolator_int32 = {
-	.funcs[ETCH_INTERPOLATOR_DISCRETE] = _discrete,
-	.funcs[ETCH_INTERPOLATOR_LINEAR] = _linear,
-	.funcs[ETCH_INTERPOLATOR_COSIN] = _cosin,
-	.funcs[ETCH_INTERPOLATOR_QUADRATIC] = _bquad,
-};

@@ -20,14 +20,11 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-static void _discrete(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res,
-		Etch_Interpolator_Type_Data *data)
-{
-	res->data.string = da->data.string;
-}
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-Etch_Interpolator etch_interpolator_string = {
-	.funcs[ETCH_INTERPOLATOR_DISCRETE] = _discrete,
-};
+/* we only handle the discrete version */
+void etch_interpolator_string(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res)
+{
+	res->data.string = da->data.string;
+}

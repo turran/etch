@@ -124,30 +124,6 @@ typedef struct _Etch_Data
  */
 
 /**
- * Specific data needed for cubic bezier animations
- * TODO dont use etch data on the quadratic or cubic versions, just 0-1 values
- */
-typedef struct _Etch_Animation_Cubic
-{
-	Etch_Data cp1; /** First control point */
-	Etch_Data cp2; /** Second control point */
-} Etch_Animation_Cubic;
-
-/**
- * Specific data needed for quadratic bezier animations
- */
-typedef struct _Etch_Animation_Quadratic
-{
-	Etch_Data cp; /** Control point */
-} Etch_Animation_Quadratic;
-
-typedef union _Etch_Interpolator_Type_Data
-{
-	Etch_Animation_Cubic c;
-	Etch_Animation_Quadratic q;
-} Etch_Interpolator_Type_Data;
-
-/**
  * Possible interpolator types
  */
 typedef enum _Etch_Interpolator_Type
@@ -160,17 +136,7 @@ typedef enum _Etch_Interpolator_Type
 	ETCH_INTERPOLATOR_TYPES
 } Etch_Interpolator_Type;
 
-typedef void (*Etch_Interpolator_Func)(Etch_Data *a, Etch_Data *b, double m, Etch_Data *res, Etch_Interpolator_Type_Data *data);
-
-
-/*
- * FIXME the interpolator can be reduced at the end
- * into a single function only. the m value, is the one that changes between discrete, cosin, quadratic, etc
- */
-typedef struct _Etch_Interpolator
-{
-	Etch_Interpolator_Func funcs[ETCH_INTERPOLATOR_TYPES];
-} Etch_Interpolator;
+typedef void (*Etch_Interpolator)(Etch_Data *a, Etch_Data *b, double m, Etch_Data *res);
 
 /**
  * @}
@@ -216,7 +182,7 @@ EAPI Etch_Animation * etch_animation_add(Etch *e, Etch_Data_Type dtype,
 		Etch_Animation_State_Callback stop,
 		void *data);
 EAPI Etch_Animation * etch_animation_external_add(Etch *e,
-		Etch_Interpolator *interpolator,
+		Etch_Interpolator interpolator,
 		Etch_Animation_Callback cb,
 		Etch_Animation_State_Callback start,
 		Etch_Animation_State_Callback stop,
@@ -248,9 +214,8 @@ EAPI void etch_animation_keyframe_time_set(Etch_Animation_Keyframe *m, Etch_Time
 EAPI void etch_animation_keyframe_time_get(Etch_Animation_Keyframe *k, Etch_Time *t);
 EAPI void etch_animation_keyframe_value_set(Etch_Animation_Keyframe *k, Etch_Data *v);
 EAPI void etch_animation_keyframe_value_get(Etch_Animation_Keyframe *k, Etch_Data *v);
-EAPI void etch_animation_keyframe_cubic_value_set(Etch_Animation_Keyframe *k, Etch_Data *cp1,
-		Etch_Data *cp2);
-EAPI void etch_animation_keyframe_quadratic_value_set(Etch_Animation_Keyframe *k, Etch_Data *cp1);
+EAPI void etch_animation_keyframe_cubic_value_set(Etch_Animation_Keyframe *k, double x0, double y0, double x1, double y1);
+EAPI void etch_animation_keyframe_quadratic_value_set(Etch_Animation_Keyframe *k, double x0, double y0);
 /**
  * @}
  */

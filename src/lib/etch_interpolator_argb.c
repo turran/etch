@@ -20,20 +20,16 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-static void _discrete(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res,
-		Etch_Interpolator_Type_Data *data)
-{
-	res->data.argb = da->data.argb;
-}
-static void _linear(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res,
-		Etch_Interpolator_Type_Data *data)
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+void etch_interpolator_argb(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res)
 {
 	unsigned int range;
 	unsigned int a, b, ag, rb;
 
 	a = da->data.argb;
 	b = db->data.argb;
-
 	/* handle specific case where a and b are equal (constant) */
 	if (a == b)
 	{
@@ -48,10 +44,3 @@ static void _linear(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res,
 
 	res->data.u32 = ag + rb;
 }
-/*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
-Etch_Interpolator etch_interpolator_argb = {
-	.funcs[ETCH_INTERPOLATOR_DISCRETE] = _discrete,
-	.funcs[ETCH_INTERPOLATOR_LINEAR] = _linear,
-};

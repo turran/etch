@@ -64,6 +64,37 @@ struct _Etch
 };
 
 /**
+ * Specific data needed for cubic bezier animations
+ */
+typedef struct _Etch_Animation_Cubic
+{
+	/** First control point */
+	double x0;
+	double y0;
+	/** Second control point */
+	double x1;
+	double y1;
+} Etch_Animation_Cubic;
+
+/**
+ * Specific data needed for quadratic bezier animations
+ */
+typedef struct _Etch_Animation_Quadratic
+{
+	/** Control point */
+	double x0;
+	double y0;
+} Etch_Animation_Quadratic;
+
+
+typedef union _Etch_Interpolator_Type_Data
+{
+	Etch_Animation_Cubic c;
+	Etch_Animation_Quadratic q;
+} Etch_Interpolator_Type_Data;
+
+
+/**
  * An animation mark is a defined state on the timeline of an animation. It sets
  * that a given time a property should have the specified value.
  */
@@ -103,7 +134,7 @@ struct _Etch_Animation
 	Etch_Data curr; /** current value in the whole animation */
 	unsigned int repeat; /** number of times the animation will repeat, 0 for infinite */
 	Etch_Data_Type dtype; /** animations only animates data types, no properties */
-	Etch_Interpolator *interpolator; /** the interpolator to use for the requested data type */
+	Etch_Interpolator interpolator; /** the interpolator to use for the requested data type */
 	Etch_Animation_Callback cb; /** function to call when a value has been set */
 	Etch_Animation_State_Callback start_cb, stop_cb;
 	void *data; /** user provided data */
@@ -114,6 +145,13 @@ struct _Etch_Animation
 };
 
 void etch_animation_animate(Etch_Animation *a, Etch_Time curr);
-Etch_Animation * etch_animation_new(Etch *e, Etch_Data_Type dtype, Etch_Interpolator *interpolator, Etch_Animation_Callback cb, Etch_Animation_State_Callback start, Etch_Animation_State_Callback stop, void *prev, void *curr, void *data);
+Etch_Animation * etch_animation_new(Etch *e, Etch_Data_Type dtype, Etch_Interpolator interpolator, Etch_Animation_Callback cb, Etch_Animation_State_Callback start, Etch_Animation_State_Callback stop, void *prev, void *curr, void *data);
+
+void etch_interpolator_uint32(Etch_Data *a, Etch_Data *b, double m, Etch_Data *res);
+void etch_interpolator_int32(Etch_Data *a, Etch_Data *b, double m, Etch_Data *res);
+void etch_interpolator_string(Etch_Data *a, Etch_Data *b, double m, Etch_Data *res);
+void etch_interpolator_float(Etch_Data *a, Etch_Data *b, double m, Etch_Data *res);
+void etch_interpolator_double(Etch_Data *a, Etch_Data *b, double m, Etch_Data *res);
+void etch_interpolator_argb(Etch_Data *a, Etch_Data *b, double m, Etch_Data *res);
 
 #endif /*ETCH_PRIVATE_H_*/

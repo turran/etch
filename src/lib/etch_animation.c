@@ -34,6 +34,8 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+typedef double (*Etch_Animation_Interpolator_Calc)(double m, Etch_Interpolator_Type_Data *data);
+
 typedef struct _Etch_Animation_Iterator
 {
 	Eina_Iterator iterator;
@@ -77,6 +79,50 @@ static void _animation_debug(Etch_Animation *a)
 		l = l->next;
 	}
 }
+
+/*----------------------------------------------------------------------------*
+ *                               The calc types                               *
+ *----------------------------------------------------------------------------*/
+static double _calc_linear(double m, Etch_Interpolator_Type_Data *data)
+{
+	return m;
+}
+
+static double _calc_discrete(double m, Etch_Interpolator_Type_Data *data)
+{
+	return m < 1 ? 0 : 1;
+}
+
+static double _calc_cosin(double m, Etch_Interpolator_Type_Data *data)
+{
+	double m2;
+
+	m2 = (1 - cos(m * M_PI))/2;
+}
+
+static double _calc_quadratic(double m, Etch_Interpolator_Type_Data *data)
+{
+	//res->data.d =  (1 - m) * (1 - m) * a + 2 * m * (1 - m) * (q->cp.data.d) + m * m * b;
+	/* TODO */
+	return m;
+}
+
+static double _calc_cubic(double m, Etch_Interpolator_Type_Data *data)
+{
+	/* TODO */
+	return m;
+}
+
+static Etch_Animation_Interpolator_Calc _calcs[ETCH_INTERPOLATOR_TYPES] = {
+	/* ETCH_INTERPOLATOR_DISCRETE 	*/ _calc_discrete,
+	/* ETCH_INTERPOLATOR_LINEAR 	*/ _calc_linear,
+	/* ETCH_INTERPOLATOR_COSIN 	*/ _calc_cosin,
+	/* ETCH_INTERPOLATOR_QUADRATIC 	*/ _calc_quadratic,
+	/* ETCH_INTERPOLATOR_CUBIC 	*/ _calc_cubic,
+};
+/*----------------------------------------------------------------------------*
+ *                           The iterator interface                           *
+ *----------------------------------------------------------------------------*/
 
 static Eina_Bool _iterator_next(Etch_Animation_Iterator *it, void **data)
 {
@@ -191,7 +237,6 @@ void etch_animation_animate(Etch_Animation *a, Etch_Time curr)
 		//DBG("-> [%g] %g %g", curr, start->time, end->time);
 		if ((start->time <= curr) && (curr <= end->time))
 		{
-			Etch_Interpolator_Func ifnc;
 			Etch_Data old;
 			double m;
 			void *data = NULL;
@@ -203,17 +248,16 @@ void etch_animation_animate(Etch_Animation *a, Etch_Time curr)
 				m = 1;
 			else
 				m = (double)(curr - start->time)/(end->time - start->time);
+			/* calc the new m */
+			m = _calcs[start->type](m, &start->idata);
 			/* accelerate the calculations if we get the same m as the previous call */
 			if (m == a->m)
 			{
 				a->cb(start, &a->curr, &a->curr, a->data);
 				return;
 			}
-			/* interpolate the new value */
-			ifnc = a->interpolator->funcs[start->type];
-			if (!ifnc)
-				return;
-			ifnc(&(start->value), &(end->value), m, &a->curr, &start->idata);
+			/* interpolate the value with the new m */
+			a->interpolator(&(start->value), &(end->value), m, &a->curr);
 			/* once the value has been set, call the callback */
 			a->cb(start, &a->curr, &a->prev, a->data);
 			/* swap the values */
@@ -239,7 +283,7 @@ void etch_animation_animate(Etch_Animation *a, Etch_Time curr)
 /* TODO add the repeat callback with the an argument of the repeat count */
 Etch_Animation * etch_animation_new(Etch *e,
 		Etch_Data_Type dtype,
-		Etch_Interpolator *interpolator,
+		Etch_Interpolator interpolator,
 		Etch_Animation_Callback cb,
 		Etch_Animation_State_Callback start,
 		Etch_Animation_State_Callback stop,
@@ -526,9 +570,10 @@ EAPI void etch_animation_keyframe_value_set(Etch_Animation_Keyframe *k, Etch_Dat
  * @param k The Etch_Animation_Keyframe
  * @param cp1 The value that defines the control point
  */
-EAPI void etch_animation_keyframe_quadratic_value_set(Etch_Animation_Keyframe *k, Etch_Data *cp1)
+EAPI void etch_animation_keyframe_quadratic_value_set(Etch_Animation_Keyframe *k, double x0, double y0)
 {
-	k->idata.q.cp = *cp1;
+	k->idata.q.x0 = x0;
+	k->idata.q.y0 = y0;
 }
 /**
  * Sets the control point on a keyframe with a cubic interpolation type
@@ -536,11 +581,12 @@ EAPI void etch_animation_keyframe_quadratic_value_set(Etch_Animation_Keyframe *k
  * @param cp1 The value that defines the first control point
  * @param cp2 The value that defines the second control point
  */
-EAPI void etch_animation_keyframe_cubic_value_set(Etch_Animation_Keyframe *k, Etch_Data *cp1,
-		Etch_Data *cp2)
+EAPI void etch_animation_keyframe_cubic_value_set(Etch_Animation_Keyframe *k, double x0, double y0, double x1, double y1)
 {
-	k->idata.c.cp1 = *cp1;
-	k->idata.c.cp2 = *cp2;
+	k->idata.c.x0 = x0;
+	k->idata.c.y0 = y0;
+	k->idata.c.x1 = x1;
+	k->idata.c.y1 = y1;
 }
 
 /**

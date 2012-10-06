@@ -34,20 +34,13 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-extern Etch_Interpolator etch_interpolator_uint32;
-extern Etch_Interpolator etch_interpolator_int32;
-extern Etch_Interpolator etch_interpolator_argb;
-extern Etch_Interpolator etch_interpolator_string;
-extern Etch_Interpolator etch_interpolator_float;
-extern Etch_Interpolator etch_interpolator_double;
-
-static Etch_Interpolator *_interpolators[ETCH_DATATYPES] = {
-	[ETCH_UINT32] = &etch_interpolator_uint32,
-	[ETCH_INT32] = &etch_interpolator_int32,
-	[ETCH_ARGB] = &etch_interpolator_argb,
-	[ETCH_STRING] = &etch_interpolator_string,
-	[ETCH_FLOAT] = &etch_interpolator_float,
-	[ETCH_DOUBLE] = &etch_interpolator_double,
+static Etch_Interpolator _interpolators[ETCH_DATATYPES] = {
+	[ETCH_UINT32] = etch_interpolator_uint32,
+	[ETCH_INT32] = etch_interpolator_int32,
+	[ETCH_ARGB] = etch_interpolator_argb,
+	[ETCH_STRING] = etch_interpolator_string,
+	[ETCH_FLOAT] = etch_interpolator_float,
+	[ETCH_DOUBLE] = etch_interpolator_double,
 	[ETCH_EXTERNAL] = NULL,
 };
 
@@ -304,7 +297,7 @@ EAPI Etch_Animation * etch_animation_add(Etch *e, Etch_Data_Type dtype,
 		void *data)
 {
 	Etch_Animation *a;
-	Etch_Interpolator *interpolator;
+	Etch_Interpolator interpolator;
 
 	if (dtype >= ETCH_EXTERNAL)
 		return NULL; 
@@ -328,7 +321,7 @@ EAPI Etch_Animation * etch_animation_add(Etch *e, Etch_Data_Type dtype,
  * @param data User provided data that passed to the callbacks
  */
 EAPI Etch_Animation * etch_animation_external_add(Etch *e,
-		Etch_Interpolator *interpolator,
+		Etch_Interpolator interpolator,
 		Etch_Animation_Callback cb,
 		Etch_Animation_State_Callback start,
 		Etch_Animation_State_Callback stop,

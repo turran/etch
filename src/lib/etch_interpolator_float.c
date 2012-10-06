@@ -22,13 +22,10 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-static void _discrete(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res,
-		Etch_Interpolator_Type_Data *data)
-{
-	res->data.f = da->data.f;
-}
-static void _linear(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res,
-		Etch_Interpolator_Type_Data *data)
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+void etch_interpolator_float(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res)
 {
 	double r;
 	float a, b;
@@ -45,37 +42,4 @@ static void _linear(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res,
 	res->data.f = r;
 }
 
-static void _cosin(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res,
-		Etch_Interpolator_Type_Data *data)
-{
-	double m2;
-	float a, b;
 
-	a = da->data.f;
-	b = db->data.f;
-
-	m2 = (1 - cos(m * M_PI))/2;
-
-	res->data.f = ((double)(a * (1 - m2) + b * m2));
-}
-
-static void _bquad(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res,
-		Etch_Interpolator_Type_Data *data)
-{
-	Etch_Animation_Quadratic *q = &data->q;
-	float a, b;
-
-	a = da->data.f;
-	b = db->data.f;
-
-	res->data.f =  (1 - m) * (1 - m) * a + 2 * m * (1 - m) * (q->cp.data.f) + m * m * b;
-}
-/*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
-Etch_Interpolator etch_interpolator_float = {
-	.funcs[ETCH_INTERPOLATOR_DISCRETE] = _discrete,
-	.funcs[ETCH_INTERPOLATOR_LINEAR] = _linear,
-	.funcs[ETCH_INTERPOLATOR_COSIN] = _cosin,
-	.funcs[ETCH_INTERPOLATOR_QUADRATIC] = _bquad,
-};
