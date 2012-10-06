@@ -27,7 +27,6 @@
  *============================================================================*/
 void etch_interpolator_int32(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res)
 {
-	double r;
 	int32_t a, b;
 
 	a = da->data.i32;
@@ -38,6 +37,5 @@ void etch_interpolator_int32(Etch_Data *da, Etch_Data *db, double m, Etch_Data *
 		res->data.i32 = a;
 		return;
 	}
-	r = ((1 - m) * a) + (m * b);
-	res->data.i32 = ceil(r);
+	etch_interpolate_int32(a, b, m, &(res->data.i32));
 }

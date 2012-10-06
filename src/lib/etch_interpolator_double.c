@@ -36,6 +36,5 @@ void etch_interpolator_double(Etch_Data *da, Etch_Data *db, double m, Etch_Data 
 		res->data.d = a;
 		return;
 	}
-	r = ((1 - m) * a) + (m * b);
-	res->data.d = r;
+	etch_interpolate_double(a, b, m, &(res->data.d));
 }

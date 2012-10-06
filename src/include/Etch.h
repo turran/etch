@@ -19,6 +19,7 @@
 #define ETCH_H_
 
 #include <Eina.h>
+#include <math.h>
 
 #ifdef EAPI
 # undef EAPI
@@ -135,6 +136,46 @@ typedef enum _Etch_Interpolator_Type
 	ETCH_INTERPOLATOR_CUBIC, /**< Cubic bezier interpolation */
 	ETCH_INTERPOLATOR_TYPES
 } Etch_Interpolator_Type;
+
+static inline void etch_interpolate_argb(uint32_t a, uint32_t b, double m, uint32_t *r)
+{
+	uint32_t range;
+	uint32_t ag, rb;
+
+	/* b - a*m + a */
+	range = rint(256 * m);
+	/* FIXME this can be optimized with MMX  or even use the libargb */
+	ag = ((((((b >> 8) & 0xff00ff) - ((a >> 8) & 0xff00ff)) * range) + (a & 0xff00ff00)) & 0xff00ff00);
+	rb = ((((((b & 0xff00ff) - (a & 0xff00ff)) * (range)) >> 8) + (a & 0xff00ff)) & 0xff00ff);
+
+	*r = ag + rb;
+}
+
+static inline void etch_interpolate_double(double a, double b, double m, double *r)
+{
+	*r = ((1 - m) * a) + (m * b);
+}
+
+static inline void etch_interpolate_float(float a, float b, double m, float *r)
+{
+	*r = ((1 - m) * a) + (m * b);
+}
+
+static inline void etch_interpolate_int32(int32_t a, int32_t b, double m, int32_t *r)
+{
+	double rr;
+
+	rr = ((1 - m) * a) + (m * b);
+	*r = ceil(rr);
+}
+
+static inline void etch_interpolate_uint32(uint32_t a, uint32_t b, double m, uint32_t *r)
+{
+	double rr;
+
+	rr = ((1 - m) * a) + (m * b);
+	*r = ceil(rr);
+}
 
 typedef void (*Etch_Interpolator)(Etch_Data *a, Etch_Data *b, double m, Etch_Data *res);
 

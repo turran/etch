@@ -38,8 +38,7 @@ void etch_interpolator_float(Etch_Data *da, Etch_Data *db, double m, Etch_Data *
 		res->data.f = a;
 		return;
 	}
-	r = ((1 - m) * a) + (m * b);
-	res->data.f = r;
+	etch_interpolate_float(a, b, m, &(res->data.f));
 }
 
 

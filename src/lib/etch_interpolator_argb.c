@@ -25,8 +25,7 @@
  *============================================================================*/
 void etch_interpolator_argb(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res)
 {
-	unsigned int range;
-	unsigned int a, b, ag, rb;
+	unsigned int a, b;
 
 	a = da->data.argb;
 	b = db->data.argb;
@@ -36,11 +35,5 @@ void etch_interpolator_argb(Etch_Data *da, Etch_Data *db, double m, Etch_Data *r
 		res->data.u32 = a;
 		return;
 	}
-	/* b - a*m + a */
-	range = rint(256 * m);
-	/* FIXME this can be optimized with MMX */
-	ag = ((((((b >> 8) & 0xff00ff) - ((a >> 8) & 0xff00ff)) * range) + (a & 0xff00ff00)) & 0xff00ff00);
-	rb = ((((((b & 0xff00ff) - (a & 0xff00ff)) * (range)) >> 8) + (a & 0xff00ff)) & 0xff00ff);
-
-	res->data.u32 = ag + rb;
+	etch_interpolate_argb(a, b, m, &(res->data.u32));
 }
