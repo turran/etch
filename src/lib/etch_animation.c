@@ -266,8 +266,11 @@ void etch_animation_animate(Etch_Animation *a, Etch_Time curr)
 				void *tmp;
 
 				tmp = a->prev.data.external;
-				a->prev.data.external = a->curr.data.external;
-				a->curr.data.external = tmp;
+				if (tmp)
+				{
+					a->prev.data.external = a->curr.data.external;
+					a->curr.data.external = tmp;
+				}
 			}
 			else
 			{
