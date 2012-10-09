@@ -140,6 +140,10 @@ static void _process(Etch *e)
 			if (a->start_cb) a->start_cb(a, a->data);
 			a->started = EINA_TRUE;
 		}
+		else
+		{
+			/* send the repeat event */
+		}
 		//DBG("animating %" ETCH_TIME_FORMAT, ETCH_TIME_ARGS (rcurr));
 		etch_animation_animate(a, rcurr);
 	}
