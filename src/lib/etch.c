@@ -63,8 +63,10 @@ static void _process(Etch *e)
 	{
 		Etch_Time rcurr;
 		Etch_Time atime; /* animation time */
+		Etch_Time end;
+		Etch_Time length;
 
-		/*DBG("[%" ETCH_TIME_FORMAT " %" ETCH_TIME_FORMAT "]"
+		DBG("[%" ETCH_TIME_FORMAT " %" ETCH_TIME_FORMAT "]"
 				" %" ETCH_TIME_FORMAT \
 				" %" ETCH_TIME_FORMAT \
 				" %d",
@@ -72,7 +74,7 @@ static void _process(Etch *e)
 				ETCH_TIME_ARGS (a->offset),
 				ETCH_TIME_ARGS (a->start),
 				ETCH_TIME_ARGS (a->end),
-				a->repeat);*/
+				a->repeat);
 		if (!a->enabled)
 			continue;
 		/* first decrement the offset */
@@ -83,69 +85,40 @@ static void _process(Etch *e)
 		/* are we really on the animation time ? */
 		if (atime < a->start)
 			continue;
-		/* only once */
-		if (a->repeat == 1)
-		{
-			if (atime > a->end)
-			{
-				if (a->started)
-				{
-					a->started = EINA_FALSE;
-					if (a->stop_cb) a->stop_cb(a, a->data);
-				}
-				continue;
-			}
-			rcurr = atime;
-		}
-		/* in case the animation repeats check for it */
+		/* check if we have finished */
+		if (a->repeat < 0)
+			end = INT64_MAX;
 		else
+			end = (a->end * a->repeat) - a->start;
+
+		if (atime > end)
 		{
-			Etch_Time tmp;
-			Etch_Time length;
-
-			/* n times */
-			if (a->repeat)
+			if (a->started)
 			{
-				Etch_Time tmp2;
-				Etch_Time rend;
-
-				/* FIXME the length can be precalculated when repeat is set */
-				tmp2 = a->end;
-				tmp2 *= a->repeat;
-				rend = tmp2 - a->start;
-				if (atime > rend)
-				{
-					if (a->started)
-					{
-						a->started = EINA_FALSE;
-						if (a->stop_cb) a->stop_cb(a, a->data);
-					}
-					continue;
-				}
+				DBG("Stopping animation %p", a);
+				a->started = EINA_FALSE;
+				if (a->stop_cb) a->stop_cb(a, a->data);
 			}
-			/* FIXME the length can be precalculated when a keyframe time is set */
-			length = a->end - a->start;
-			//DBG("length %" ETCH_TIME_FORMAT, ETCH_TIME_ARGS (length));
-			tmp = atime - a->start;
-			//DBG("relative %" ETCH_TIME_FORMAT, ETCH_TIME_ARGS (tmp));
-			rcurr = tmp % length;
-			//DBG("mod %" ETCH_TIME_FORMAT, ETCH_TIME_ARGS (rcurr));
-			rcurr += a->start;
-			//DBG("final %" ETCH_TIME_FORMAT " %" ETCH_TIME_FORMAT,
-			//		ETCH_TIME_ARGS (rcurr),
-			//		ETCH_TIME_ARGS (e->curr));
+			continue;
 		}
+		/* ok we are on the range */
 		if (!a->started)
 		{
+			DBG("Starting animation %p", a);
 			if (a->start_cb) a->start_cb(a, a->data);
 			a->started = EINA_TRUE;
 		}
-		else
+		/* calculate the relative current time */
+		length = a->end - a->start;
+		rcurr = (atime - a->start) % length;
+		rcurr += a->start;
+		/* check the repeat flag */
+		if ((rcurr - e->tpf) < a->start)
 		{
-			/* send the repeat event */
+			DBG("Repeating animation %p", a);
 			if (a->repeat_cb) a->repeat_cb(a, a->data);
 		}
-		//DBG("animating %" ETCH_TIME_FORMAT, ETCH_TIME_ARGS (rcurr));
+		DBG("Animating %" ETCH_TIME_FORMAT, ETCH_TIME_ARGS (rcurr));
 		etch_animation_animate(a, rcurr);
 	}
 }

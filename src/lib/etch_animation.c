@@ -369,7 +369,7 @@ EAPI Etch_Data_Type etch_animation_data_type_get(Etch_Animation *a)
  * @param a The Etch_Animation
  * @param times Number of times, -1 for infinite
  */
-EAPI void etch_animation_repeat_set(Etch_Animation *a, unsigned int times)
+EAPI void etch_animation_repeat_set(Etch_Animation *a, int times)
 {
 	a->repeat = times;
 }

@@ -64,7 +64,7 @@ EAPI void etch_init(void);
 EAPI void etch_shutdown(void);
 
 typedef struct _Etch Etch; /**< Etch Opaque Handler */
-typedef uint64_t Etch_Time; /**< Etch Time abstraction in nano seconds */
+typedef int64_t Etch_Time; /**< Etch Time abstraction in nano seconds */
 
 #define ETCH_SECOND (1000000000LL)
 #define ETCH_MSECOND (1000000LL)
@@ -243,7 +243,7 @@ EAPI void etch_animation_offset_add(Etch_Animation *a, Etch_Time inc);
 EAPI Etch * etch_animation_etch_get(Etch_Animation *a);
 EAPI Eina_Iterator * etch_animation_iterator_get(Etch_Animation *a);
 EAPI void etch_animation_data_get(Etch_Animation *a, Etch_Data *v);
-EAPI void etch_animation_repeat_set(Etch_Animation *a, unsigned int times);
+EAPI void etch_animation_repeat_set(Etch_Animation *a, int times);
 EAPI int etch_animation_keyframe_count(Etch_Animation *a);
 EAPI Etch_Animation_Keyframe * etch_animation_keyframe_get(Etch_Animation *a, unsigned int index);
 
