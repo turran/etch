@@ -177,7 +177,7 @@ static inline void etch_interpolate_uint32(uint32_t a, uint32_t b, double m, uin
 	*r = ceil(rr);
 }
 
-typedef void (*Etch_Interpolator)(Etch_Data *a, Etch_Data *b, double m, Etch_Data *res);
+typedef void (*Etch_Interpolator)(Etch_Data *a, Etch_Data *b, double m, Etch_Data *res, void *data);
 
 /**
  * @}

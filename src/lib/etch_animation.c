@@ -257,7 +257,7 @@ void etch_animation_animate(Etch_Animation *a, Etch_Time curr)
 				return;
 			}
 			/* interpolate the value with the new m */
-			a->interpolator(&(start->value), &(end->value), m, &a->curr);
+			a->interpolator(&(start->value), &(end->value), m, &a->curr, a->data);
 			/* once the value has been set, call the callback */
 			a->cb(start, &a->curr, &a->prev, a->data);
 			/* swap the values */

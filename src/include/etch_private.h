@@ -147,11 +147,11 @@ struct _Etch_Animation
 void etch_animation_animate(Etch_Animation *a, Etch_Time curr);
 Etch_Animation * etch_animation_new(Etch *e, Etch_Data_Type dtype, Etch_Interpolator interpolator, Etch_Animation_Callback cb, Etch_Animation_State_Callback start, Etch_Animation_State_Callback stop, void *prev, void *curr, void *data);
 
-void etch_interpolator_uint32(Etch_Data *a, Etch_Data *b, double m, Etch_Data *res);
-void etch_interpolator_int32(Etch_Data *a, Etch_Data *b, double m, Etch_Data *res);
-void etch_interpolator_string(Etch_Data *a, Etch_Data *b, double m, Etch_Data *res);
-void etch_interpolator_float(Etch_Data *a, Etch_Data *b, double m, Etch_Data *res);
-void etch_interpolator_double(Etch_Data *a, Etch_Data *b, double m, Etch_Data *res);
-void etch_interpolator_argb(Etch_Data *a, Etch_Data *b, double m, Etch_Data *res);
+void etch_interpolator_uint32(Etch_Data *a, Etch_Data *b, double m, Etch_Data *res, void *data);
+void etch_interpolator_int32(Etch_Data *a, Etch_Data *b, double m, Etch_Data *res, void *data);
+void etch_interpolator_string(Etch_Data *a, Etch_Data *b, double m, Etch_Data *res, void *data);
+void etch_interpolator_float(Etch_Data *a, Etch_Data *b, double m, Etch_Data *res, void *data);
+void etch_interpolator_double(Etch_Data *a, Etch_Data *b, double m, Etch_Data *res, void *data);
+void etch_interpolator_argb(Etch_Data *a, Etch_Data *b, double m, Etch_Data *res, void *data);
 
 #endif /*ETCH_PRIVATE_H_*/

@@ -23,7 +23,8 @@
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-void etch_interpolator_double(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res)
+void etch_interpolator_double(Etch_Data *da, Etch_Data *db, double m,
+		Etch_Data *res, void *data)
 {
 	double r;
 	double a, b;

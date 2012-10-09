@@ -23,7 +23,8 @@
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-void etch_interpolator_argb(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res)
+void etch_interpolator_argb(Etch_Data *da, Etch_Data *db, double m,
+		Etch_Data *res, void *data)
 {
 	unsigned int a, b;
 

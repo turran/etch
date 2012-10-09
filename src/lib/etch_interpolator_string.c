@@ -24,7 +24,8 @@
  *                                 Global                                     *
  *============================================================================*/
 /* we only handle the discrete version */
-void etch_interpolator_string(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res)
+void etch_interpolator_string(Etch_Data *da, Etch_Data *db, double m,
+		Etch_Data *res, void *data)
 {
 	res->data.string = da->data.string;
 }

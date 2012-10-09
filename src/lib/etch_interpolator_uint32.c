@@ -23,7 +23,8 @@
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
-void etch_interpolator_uint32(Etch_Data *da, Etch_Data *db, double m, Etch_Data *res)
+void etch_interpolator_uint32(Etch_Data *da, Etch_Data *db, double m,
+		Etch_Data *res, void *data)
 {
 	uint32_t a, b;
 
