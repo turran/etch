@@ -143,6 +143,7 @@ static void _process(Etch *e)
 		else
 		{
 			/* send the repeat event */
+			if (a->repeat_cb) a->repeat_cb(a, a->data);
 		}
 		//DBG("animating %" ETCH_TIME_FORMAT, ETCH_TIME_ARGS (rcurr));
 		etch_animation_animate(a, rcurr);
@@ -298,6 +299,7 @@ EAPI Etch_Animation * etch_animation_add(Etch *e, Etch_Data_Type dtype,
 		Etch_Animation_Callback cb,
 		Etch_Animation_State_Callback start,
 		Etch_Animation_State_Callback stop,
+		Etch_Animation_State_Callback repeat,
 		void *data)
 {
 	Etch_Animation *a;
@@ -307,7 +309,7 @@ EAPI Etch_Animation * etch_animation_add(Etch *e, Etch_Data_Type dtype,
 		return NULL; 
 
 	interpolator = _interpolators[dtype];
-	a = etch_animation_new(e, dtype, interpolator, cb, start, stop, NULL, NULL, data);
+	a = etch_animation_new(e, dtype, interpolator, cb, start, stop, repeat, NULL, NULL, data);
 	e->animations = eina_inlist_append(e->animations, EINA_INLIST_GET(a));
 
 	return a;
@@ -329,12 +331,13 @@ EAPI Etch_Animation * etch_animation_external_add(Etch *e,
 		Etch_Animation_Callback cb,
 		Etch_Animation_State_Callback start,
 		Etch_Animation_State_Callback stop,
+		Etch_Animation_State_Callback repeat,
 		void *prev,
 		void *current,
 		void *data)
 {
 	Etch_Animation *a;
-	a = etch_animation_new(e, ETCH_EXTERNAL, interpolator, cb, start, stop, prev, current, data);
+	a = etch_animation_new(e, ETCH_EXTERNAL, interpolator, cb, start, stop, repeat, prev, current, data);
 	e->animations = eina_inlist_append(e->animations, EINA_INLIST_GET(a));
 
 	return a;

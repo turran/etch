@@ -136,7 +136,9 @@ struct _Etch_Animation
 	Etch_Data_Type dtype; /** animations only animates data types, no properties */
 	Etch_Interpolator interpolator; /** the interpolator to use for the requested data type */
 	Etch_Animation_Callback cb; /** function to call when a value has been set */
-	Etch_Animation_State_Callback start_cb, stop_cb;
+	Etch_Animation_State_Callback start_cb;
+	Etch_Animation_State_Callback stop_cb;
+	Etch_Animation_State_Callback repeat_cb;
 	void *data; /** user provided data */
 	int count; /** number of keyframes this animation has */
 	Eina_Bool enabled;/** easy way to disable/enable an animation */
@@ -145,7 +147,10 @@ struct _Etch_Animation
 };
 
 void etch_animation_animate(Etch_Animation *a, Etch_Time curr);
-Etch_Animation * etch_animation_new(Etch *e, Etch_Data_Type dtype, Etch_Interpolator interpolator, Etch_Animation_Callback cb, Etch_Animation_State_Callback start, Etch_Animation_State_Callback stop, void *prev, void *curr, void *data);
+Etch_Animation * etch_animation_new(Etch *e, Etch_Data_Type dtype,
+		Etch_Interpolator interpolator, Etch_Animation_Callback cb,
+		Etch_Animation_State_Callback start, Etch_Animation_State_Callback stop,
+		Etch_Animation_State_Callback repeat, void *prev, void *curr, void *data);
 
 void etch_interpolator_uint32(Etch_Data *a, Etch_Data *b, double m, Etch_Data *res, void *data);
 void etch_interpolator_int32(Etch_Data *a, Etch_Data *b, double m, Etch_Data *res, void *data);

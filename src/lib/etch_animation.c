@@ -290,6 +290,7 @@ Etch_Animation * etch_animation_new(Etch *e,
 		Etch_Animation_Callback cb,
 		Etch_Animation_State_Callback start,
 		Etch_Animation_State_Callback stop,
+		Etch_Animation_State_Callback repeat,
 		void *prev,
 		void *curr,
 		void *data)
@@ -308,6 +309,7 @@ Etch_Animation * etch_animation_new(Etch *e,
 	a->etch = e;
 	a->start_cb = start;
 	a->stop_cb = stop;
+	a->repeat_cb = repeat;
 	/* in case of external animations we need to keep
 	 * the data
 	 */
