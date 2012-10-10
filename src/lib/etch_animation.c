@@ -98,6 +98,7 @@ static double _calc_cosin(double m, Etch_Interpolator_Type_Data *data)
 	double m2;
 
 	m2 = (1 - cos(m * M_PI))/2;
+	return m2;
 }
 
 static double _calc_quadratic(double m, Etch_Interpolator_Type_Data *data)

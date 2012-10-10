@@ -87,9 +87,8 @@ static void _process(Etch *e)
 			continue;
 		/* check if we have finished */
 		if (a->repeat < 0)
-			end = INT64_MAX;
-		else
-			end = (a->end * a->repeat) - a->start;
+			goto infinite;
+		end = (a->end * a->repeat) - a->start;
 
 		if (atime > end)
 		{
@@ -101,6 +100,7 @@ static void _process(Etch *e)
 			}
 			continue;
 		}
+infinite:
 		/* ok we are on the range */
 		if (!a->started)
 		{

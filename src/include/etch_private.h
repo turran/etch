@@ -132,7 +132,7 @@ struct _Etch_Animation
 	double m; /** last interpolator value in the range [0,1] */
 	Etch_Data prev; /** previous value in the whole animation */
 	Etch_Data curr; /** current value in the whole animation */
-	unsigned int repeat; /** number of times the animation will repeat, 0 for infinite */
+	int repeat; /** number of times the animation will repeat, -1 for infinite */
 	Etch_Data_Type dtype; /** animations only animates data types, no properties */
 	Etch_Interpolator interpolator; /** the interpolator to use for the requested data type */
 	Etch_Animation_Callback cb; /** function to call when a value has been set */
