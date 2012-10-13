@@ -95,17 +95,17 @@ static double _calc_discrete(double m, Etch_Interpolator_Type_Data *data)
 
 static double _calc_cosin(double m, Etch_Interpolator_Type_Data *data)
 {
-	double m2;
-
-	m2 = (1 - cos(m * M_PI))/2;
-	return m2;
+	return (1 - cos(m * M_PI))/2;
 }
 
 static double _calc_quadratic(double m, Etch_Interpolator_Type_Data *data)
 {
-	//res->data.d =  (1 - m) * (1 - m) * a + 2 * m * (1 - m) * (q->cp.data.d) + m * m * b;
-	/* TODO */
-	return m;
+	double t;
+
+        /* FIXME: check if data->q.x0 and data->q.y0 are in [0,1] ? */
+	/* TODO: bench that algo and the one with de casteljau */
+	t = (-data->q.x0 + sqrt(data->q.x0 * data->q.x0 + m * (1 - 2 * data->q.x0))) / (1 - 2 * data->q.x0);
+	return ((1 - 2 * data->q.y0) * t + 2 * data->q.y0) * t;
 }
 
 static double _calc_cubic(double m, Etch_Interpolator_Type_Data *data)
