@@ -45,7 +45,7 @@ typedef struct _Etch_Animation_Iterator
 
 static void _keyframe_debug(Etch_Animation_Keyframe *k)
 {
-	DBG("Keyframe at %lld of type %d", k->time, k->type);
+	DBG("Keyframe at %" ETCH_TIME_FORMAT " of type %d", ETCH_TIME_ARGS(k->time), k->type);
 	switch (k->value.type)
 	{
 		case ETCH_UINT32:
@@ -297,6 +297,9 @@ Etch_Animation * etch_animation_new(Etch *e,
 		void *data)
 {
 	Etch_Animation *a;
+
+	/* first the checks */
+	if (!interpolator) return NULL;
 
 	a = calloc(1, sizeof(Etch_Animation));
 	/* common values */
