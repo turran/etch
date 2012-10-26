@@ -24,12 +24,6 @@
  * etc_timer_notify(Etch *)
  * + maybe remove the _timer_ prefix?
  * TODO remove every double and use Etch_Time
- * TODO to support external animators
- * 0. define a new "external type" for etch data (*DONE*)
- * 1. move the interpolators here (*DONE*)
- * 2. the animation_new should receive the interpolator itself, not only the data type (*DONE*)
- * 4. when animating dont use the local _interpolators but the pointer to the interpolator (*DONE*)
- * 5. We should export the interpolator API
  */
 /*============================================================================*
  *                                  Local                                     *
