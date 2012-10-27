@@ -114,11 +114,16 @@ infinite:
 		length = a->end - a->start;
 		rcurr = (atime - a->start) % length;
 		rcurr += a->start;
-		/* check the repeat flag */
+		/* if the previous tick was outside the start-end
+		 * means that we are going to repeat
+		 */
 		if ((rcurr - e->tpf) < a->start)
 		{
 			DBG("Repeating animation %p", a);
+			/* force it to pass through the last keyframe on the repeat */ 
+			etch_animation_animate(a, a->end);
 			if (a->repeat_cb) a->repeat_cb(a, a->data);
+			return;
 		}
 		DBG("Animating at %" ETCH_TIME_FORMAT " for [%" 
 				ETCH_TIME_FORMAT " %" ETCH_TIME_FORMAT "]",
