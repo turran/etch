@@ -88,7 +88,15 @@ static void _process(Etch *e)
 		{
 			if (a->started)
 			{
-				DBG("Stopping animation %p", a);
+				DBG("Stopping animation %p at %" ETCH_TIME_FORMAT
+						" with end %" ETCH_TIME_FORMAT,
+						a,
+						ETCH_TIME_ARGS (atime),
+						ETCH_TIME_ARGS (a->end));
+				/* send the last tick that will trigger the animation
+				 * for the end value
+				 */
+				etch_animation_animate(a, a->end);
 				a->started = EINA_FALSE;
 				if (a->stop_cb) a->stop_cb(a, a->data);
 			}
@@ -112,7 +120,11 @@ infinite:
 			DBG("Repeating animation %p", a);
 			if (a->repeat_cb) a->repeat_cb(a, a->data);
 		}
-		DBG("Animating %" ETCH_TIME_FORMAT, ETCH_TIME_ARGS (rcurr));
+		DBG("Animating at %" ETCH_TIME_FORMAT " for [%" 
+				ETCH_TIME_FORMAT " %" ETCH_TIME_FORMAT "]",
+				ETCH_TIME_ARGS (rcurr),
+				ETCH_TIME_ARGS (a->start),
+				ETCH_TIME_ARGS (a->end));
 		etch_animation_animate(a, rcurr);
 	}
 }
