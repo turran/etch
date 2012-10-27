@@ -104,12 +104,6 @@ static void _process(Etch *e)
 		}
 infinite:
 		/* ok we are on the range */
-		if (!a->started)
-		{
-			DBG("Starting animation %p", a);
-			if (a->start_cb) a->start_cb(a, a->data);
-			a->started = EINA_TRUE;
-		}
 		/* calculate the relative current time */
 		length = a->end - a->start;
 		rcurr = (atime - a->start) % length;
@@ -117,7 +111,7 @@ infinite:
 		/* if the previous tick was outside the start-end
 		 * means that we are going to repeat
 		 */
-		if ((rcurr - e->tpf) < a->start)
+		if (((rcurr - e->tpf) < a->start) && a->started)
 		{
 			DBG("Repeating animation %p", a);
 			/* force it to pass through the last keyframe on the repeat */ 
@@ -125,6 +119,14 @@ infinite:
 			if (a->repeat_cb) a->repeat_cb(a, a->data);
 			return;
 		}
+
+		if (!a->started)
+		{
+			DBG("Starting animation %p", a);
+			if (a->start_cb) a->start_cb(a, a->data);
+			a->started = EINA_TRUE;
+		}
+
 		DBG("Animating at %" ETCH_TIME_FORMAT " for [%" 
 				ETCH_TIME_FORMAT " %" ETCH_TIME_FORMAT "]",
 				ETCH_TIME_ARGS (rcurr),
