@@ -71,27 +71,26 @@ static void _process(Etch *e)
 				a->repeat);
 		if (!a->enabled)
 			continue;
-		/* first decrement the offset */
-		if (e->curr < a->offset)
+		/*  are we after the start ? */
+		if (e->curr < a->start + a->offset)
+			continue;
+		/* some sanity checks */
+		if (!(a->end - a->start))
 			continue;
 
-		atime = e->curr - a->offset;
-		/* are we really on the animation time ? */
-		if (atime < a->start)
-			continue;
 		/* check if we have finished */
 		if (a->repeat < 0)
 			goto infinite;
-		end = (a->end * a->repeat) - a->start;
-
-		if (atime > end)
+		/* are we before the end ? */
+		end = (a->end * a->repeat);
+		if (e->curr > end + a->offset)
 		{
 			if (a->started)
 			{
 				DBG("Stopping animation %p at %" ETCH_TIME_FORMAT
 						" with end %" ETCH_TIME_FORMAT,
 						a,
-						ETCH_TIME_ARGS (atime),
+						ETCH_TIME_ARGS (e->curr),
 						ETCH_TIME_ARGS (a->end));
 				/* send the last tick that will trigger the animation
 				 * for the end value
@@ -103,10 +102,13 @@ static void _process(Etch *e)
 			continue;
 		}
 infinite:
+		/* normalize to animation time */
+		atime = e->curr - (a->start + a->offset);
+
 		/* ok we are on the range */
 		/* calculate the relative current time */
 		length = a->end - a->start;
-		rcurr = (atime - a->start) % length;
+		rcurr = atime % length;
 		rcurr += a->start;
 		/* if the previous tick was outside the start-end
 		 * means that we are going to repeat
