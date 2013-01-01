@@ -28,16 +28,7 @@ AC_SUBST([version_info])
 
 ### Needed information
 
-AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
-
-EFL_ETCH_BUILD=""
-case "$host_os" in
-   mingw*)
-      ETCH_BUILD="-DETCH_BUILD"
-   ;;
-esac
-AC_SUBST([ETCH_BUILD])
 
 requirements_etch="eina >= 1.0.0"
 AC_SUBST([requirements_etch])
