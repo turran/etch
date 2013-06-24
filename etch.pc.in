@@ -5,7 +5,7 @@ includedir=@includedir@
 
 Name: Etch
 Description: Etch
-@pkgconfig_requires_private@: @requirements_etch@
+Requires.private: @requirements_pc@
 Version: @VERSION@
 Libs: -L${libdir} -letch
 Libs.private: -lm

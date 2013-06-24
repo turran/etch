@@ -14,7 +14,7 @@ AC_INIT([etch], [v_ver], [enesim-devel@googlegroups.com])
 AC_PREREQ([2.60])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_MACRO_DIR([m4])
-AC_CONFIG_HEADERS([src/include/config.h])
+AC_CONFIG_HEADERS([config.h])
 
 AM_INIT_AUTOMAKE([1.6 dist-bzip2])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
@@ -30,42 +30,36 @@ AC_SUBST([version_info])
 
 AC_CANONICAL_HOST
 
-requirements_etch="eina >= 1.0.0"
-AC_SUBST([requirements_etch])
+requirements_pc="eina >= 1.0.0"
+AC_SUBST([requirements_pc])
 
 
 ### Checks for programs
 
 AC_PROG_CC
+AM_PROG_CC_C_O
 
 # pkg-config
 PKG_PROG_PKG_CONFIG
 
 # Check whether pkg-config supports Requires.private
-if $PKG_CONFIG --atleast-pkgconfig-version 0.22; then
-   pkgconfig_requires_private="Requires.private"
-else
-   pkgconfig_requires_private="Requires"
+if ! $PKG_CONFIG --atleast-pkgconfig-version 0.22; then
+   AC_MSG_ERROR([pkg-config >= 0.22 is required])
 fi
-AC_SUBST([pkgconfig_requires_private])
 
 # doxygen program for documentation building
-EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
+ENS_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
 
 ### Checks for libraries
 
-PKG_CHECK_MODULES([ETCH], [${requirements_etch}])
+PKG_CHECK_MODULES([ETCH], [${requirements_pc}])
 
 ## Make the debug preprocessor configurable
 
 AC_CONFIG_FILES([
 Makefile
-etch.pc
-src/Makefile
-src/bin/Makefile
-src/lib/Makefile
-src/include/Makefile
+doc/Doxyfile
 ])
 
 AC_OUTPUT
