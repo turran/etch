@@ -4,9 +4,9 @@ libdir=@libdir@
 includedir=@includedir@
 
 Name: Etch
+Version: @VERSION@
 Description: Etch
 Requires.private: @requirements_pc@
-Version: @VERSION@
 Libs: -L${libdir} -letch
 Libs.private: -lm
 Cflags: -I${includedir}
