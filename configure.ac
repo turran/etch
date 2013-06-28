@@ -25,6 +25,9 @@ LT_INIT([win32-dll])
 version_info="lt_cur:lt_rev:lt_age"
 AC_SUBST([version_info])
 
+VMAJ=v_maj
+AC_SUBST([VMAJ])
+
 
 ### Needed information
 

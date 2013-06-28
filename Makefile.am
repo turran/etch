@@ -51,6 +51,7 @@ $(SED) \
 -e 's,@exec_prefix\@,$(exec_prefix),g' \
 -e 's,@libdir\@,$(libdir),g' \
 -e 's,@includedir\@,$(includedir),g' \
+-e 's,@pkgincludedir\@,$(pkgincludedir),g' \
 -e 's,@requirements_pc\@,$(requirements_pc),g' \
 < $< > $@ || rm $@
 
