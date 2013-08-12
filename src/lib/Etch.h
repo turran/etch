@@ -84,6 +84,7 @@ EAPI void etch_timer_tick(Etch *e);
 EAPI int etch_timer_has_end(Etch *e);
 EAPI void etch_timer_goto(Etch *e, unsigned long frame);
 EAPI void etch_timer_get(Etch *e, Etch_Time *t);
+EAPI void etch_timer_set(Etch *e, Etch_Time t);
 
 /**
  * Data types for a property

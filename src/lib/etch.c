@@ -253,13 +253,24 @@ EAPI int etch_timer_has_end(Etch *e)
 /**
  * Get the current global time of an Etch
  * @param e The Etch instance
- * @param secs The pointer where the seconds are going to be stored
- * @param usecs The pointer where the microseconds are going to be stored
+ * @param t The time to get
  */
 EAPI void etch_timer_get(Etch *e, Etch_Time *t)
 {
 	*t = e->curr;
 }
+
+/**
+ * Set the current global time of an Etch
+ * @param e The Etch instance
+ * @param t The time to set
+ */
+EAPI void etch_timer_set(Etch *e, Etch_Time t)
+{
+	e->curr = t;
+	_process(e);
+}
+
 /**
  * Move the Etch global time to the specific frame
  * @param e The Etch instance
