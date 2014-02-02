@@ -1,2 +1,2 @@
-+ Add assert statements
-+ Replace the time val struct and use just int64 in nanoseconds
++ Whenever an animation is added do not wait for the next tick to start it in case the animation
+  is already on time
