@@ -479,6 +479,7 @@ EAPI void etch_animation_disable(Etch_Animation *a)
 EAPI void etch_animation_enable(Etch_Animation *a)
 {
 	a->enabled = EINA_TRUE;
+	etch_animation_process(a);
 }
 /**
  * Query whenever an animation is atually enabled

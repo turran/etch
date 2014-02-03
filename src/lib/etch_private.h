@@ -146,6 +146,7 @@ struct _Etch_Animation
 	Etch_Time offset; /*  the real offset */
 };
 
+void etch_animation_process(Etch_Animation *a);
 void etch_animation_animate(Etch_Animation *a, Etch_Time curr);
 Etch_Animation * etch_animation_new(Etch *e, Etch_Data_Type dtype,
 		Etch_Interpolator interpolator, Etch_Animation_Callback cb,

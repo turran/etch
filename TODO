@@ -1,2 +1,0 @@
-+ Whenever an animation is added do not wait for the next tick to start it in case the animation
-  is already on time
